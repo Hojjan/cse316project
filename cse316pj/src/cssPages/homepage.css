@@ -1,5 +1,7 @@
 .homepage{
+  position: relative;
   display: flex;
+  justify-content: space-between;
 }
 
 .siteDesc{
@@ -8,7 +10,7 @@
 
 .homeWholeText{
   margin-top: 5%;
-  margin-left: 10%;
+  margin-left: 8%;
 }
 
 .homeWholeText p{
@@ -22,37 +24,43 @@
 }
 
 .homeLogin{
-  width: 25%;
+  position: absolute;
+  right: 5%;
+  width: 350px;
   margin-top: 3%;
-  margin-left: 380px;
+  margin-left: 10%;
 }
 .containers p{
   white-space: nowrap;
 }
-.email-container{
-  display: flex;
-  gap: 15px;
-}
-
-.password-container{
+.email-container, .password-container{
   display: flex;
   gap: 15px;
 }
 
 .containers input{
-  width: 200px;
+  width: 100%;
 }
 
 .signButtons{
-  margin-left: 115px !important;
+  text-align: center;
 }
 
 .loginTitle{
   font-size: 30px;
-  margin-left: 100px;
+  text-align: center;
+  margin-left: 80px;
   margin-bottom: 10px;
 }
 
 .ggLogo{
-  margin-left: 120px;
+  margin-left: 40%;
+}
+
+@media(max-width: 1300px){
+  .homeLogin{
+    position: absolute;
+    left: 760px;
+    margin-left: 10%;
+  }
 }
