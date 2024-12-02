@@ -1,0 +1,68 @@
+.wholeSignIn{
+    margin-top: 150px;
+}
+
+.wholeSignIn .title{
+    font-size: 40px;
+    font-weight: 500;
+    margin-left: 42%;
+}
+
+.wholeSignIn p{
+    margin-left: 37%;
+    transition: margin-left 0.3s ease;
+}
+
+.wholeSignIn input{
+    width: 300px;
+    margin-left: 37%;
+    margin-top: 0;
+    background-color: lavender;
+    transition: margin-left 0.3s ease;
+}
+
+.page-white-bg{
+    background-color: white;
+}
+
+.signButtons{
+    margin-left: 42%;
+    display: flex;
+    gap: 10px;
+}
+
+.signin-signin{
+    background-color: white;
+    border: 1px solid blue;
+    color: blue;
+    width: 70px;
+    height: 30px;
+}
+
+.signin-signup{
+    background-color: white;
+    border: 1px solid gray;
+    color: gray;
+    width: 70px;
+    height: 30px;
+}
+
+
+@media(max-width: 600px){
+    .wholeSignIn .title{
+        margin-left: 40%;
+    }
+
+    .wholeSignIn p{
+        margin-left: 28%;
+    }
+
+    .wholeSignIn input{
+        width: 250px;
+        margin-left: 28%;
+    }
+
+    .signButtons{
+        margin-left: 40%;
+    }
+}

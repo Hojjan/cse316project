@@ -1,0 +1,110 @@
+.imageContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 column arrangement */
+    gap: 20px;  
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    max-width: 82%; /*By limit max-width, make photos gather in the middle by letting them to fill leftover parts*/
+}
+
+.imageContainer h2{
+  margin: 5px 7px 5px;
+  font-size: 2vw;
+}
+
+  
+.image-box {
+  background-color: white; 
+  padding: 10px; 
+  border: 1px solid #ddd; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 37.5vw;
+}
+
+.image-box img {
+  max-width: 100%; 
+  height: auto;
+  border-radius: 20px;
+  padding: 2%;
+}
+
+
+.image-box p{
+  margin: 5px 8px 5px; 
+  font-size: 1.25vw;
+}
+
+.image-box p img{ /* The reason why .image-box is necessary here is that the selector .image-box img was defined first, 
+                      and since class selectors have higher priority than general selectors, the general selectors are being ignored. */
+  padding: 0 1px 0 0;
+  transform: translateY(20%); /* middle arrange Y axis */
+  width: 20px;
+  height: 20px;
+}
+
+
+
+
+@media (max-width: 1000px) {
+  .imageContainer {
+      display: grid;
+      justify-content: center;
+      gap: 30px;
+  }
+
+  .image-box{
+      width: 37.5vw;
+  }
+
+  .image-box img{
+    border-radius: 20px;
+  }
+
+  .imageContainer h2{
+    margin: 5px 7px 5px;
+    font-size: 20px;
+  }
+
+  .image-box p{
+    margin: 5px 8px 5px; 
+    font-size: 13.5px;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+  .imageContainer {
+      grid-template-columns: 1fr; 
+      padding: 0 3%;
+      width: 100%;
+  }
+
+  .image-box{
+      width: 90%;
+      padding: 5%;
+  }
+
+  .image-box img {
+      width: 100%; 
+      padding: 0;
+      border-radius: 20px;
+  }
+
+  .imageContainer h2{
+    margin: 5px 1% 5px;
+    font-size: 25px;
+  }
+
+  .image-box p{
+    margin: 5px 1% 5px; 
+    font-size: 13.5px;
+  }
+ 
+
+}

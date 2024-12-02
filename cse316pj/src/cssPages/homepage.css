@@ -1,0 +1,58 @@
+.homepage{
+  display: flex;
+}
+
+.siteDesc{
+  margin-bottom: 10%;
+}
+
+.homeWholeText{
+  margin-top: 5%;
+  margin-left: 10%;
+}
+
+.homeWholeText p{
+  margin-top: 1%;
+}
+
+.subtitle{
+  text-decoration: underline;
+  font-size: 25px;
+  margin-bottom: 3%;
+}
+
+.homeLogin{
+  width: 25%;
+  margin-top: 3%;
+  margin-left: 380px;
+}
+.containers p{
+  white-space: nowrap;
+}
+.email-container{
+  display: flex;
+  gap: 15px;
+}
+
+.password-container{
+  display: flex;
+  gap: 15px;
+}
+
+.containers input{
+  width: 200px;
+}
+
+.signButtons{
+  margin-left: 115px !important;
+}
+
+.loginTitle{
+  font-size: 30px;
+  margin-left: 100px;
+  margin-bottom: 10px;
+}
+
+.ggLogo{
+  margin-left: 120px;
+}

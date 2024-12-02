@@ -1,0 +1,46 @@
+.wholeSignUp{
+    margin-top: 150px;
+}
+
+.wholeSignUp .title{
+    font-size: 40px;
+    font-weight: 500;
+    margin-left: 42%;
+}
+
+.wholeSignUp p{
+    margin-left: 37%;
+    transition: margin-left 0.3s ease;
+}
+
+.wholeSignUp input{
+    width: 300px;
+    margin-left: 37%;
+    margin-top: 0;
+    background-color: white;
+    transition: margin-left 0.3s ease;
+}
+
+.signup-signup{
+    background-color: white;
+    border: 1px solid blue;
+    color: blue;
+    width: 70px;
+    height: 30px;
+    margin-left: 44.5%;
+}
+
+@media(max-width: 600px){
+    .wholeSignUp .title{
+        margin-left: 41%;
+    }
+
+    .wholeSignUp p{
+        margin-left: 30%;
+    }
+
+    .wholeSignUp input{
+        width: 250px;
+        margin-left: 30%;
+    }
+}

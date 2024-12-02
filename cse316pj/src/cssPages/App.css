@@ -1,0 +1,6 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    background-color: lavender;
+    margin-top: 90px; /* This is for margin to prevent nav bar hiding other contents*/
+}  
