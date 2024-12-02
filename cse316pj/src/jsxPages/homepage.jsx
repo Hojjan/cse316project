@@ -13,7 +13,7 @@ function Home(){
         <div>
           <p className="subtitle"><strong>About the course:</strong></p>
             <li>
-              An introuction to systematic design, development and testing of software
+              An introduction to systematic design, development and testing of software
               <p>systems, including even-driven and Web programming, information</p>
               <p>management, software design and development fundamentals.</p>
             </li>
