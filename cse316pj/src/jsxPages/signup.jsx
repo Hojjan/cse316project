@@ -47,7 +47,7 @@ function Signup(){
         }
 
         const hashedPassword = hashutil(email, password);
-        const newAccount = {email: email, password: hashedPassword, username: username}
+        const newAccount = {email: email, password: hashedPassword, username: username, year: selectedYear}
 
         axios.post('http://localhost:3001/api/user/signup', newAccount)
             .then((response) => {
