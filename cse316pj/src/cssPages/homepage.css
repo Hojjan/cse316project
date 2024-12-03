@@ -29,6 +29,12 @@
   width: 350px;
   margin-top: 3%;
   margin-left: 10%;
+  border-radius: 20px;
+  background-color: wheat;
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 40px;
 }
 .containers p{
   white-space: nowrap;
@@ -60,7 +66,23 @@
 @media(max-width: 1300px){
   .homeLogin{
     position: absolute;
-    left: 760px;
+    left: 700px;
     margin-left: 10%;
+  }
+}
+
+@media(max-width: 800px){
+  .homepage{
+    flex-direction: column;
+  }
+
+  .homeLogin {
+    position: static; /* 절대 위치를 제거하고 기본 흐름으로 배치 */
+    margin: 20px 4%; /* 위아래 여백 추가 및 가운데 정렬 */
+    width: 80%; /* 뷰포트에 맞게 너비를 조정 */
+  }
+
+  .homeWholeText {
+    margin-bottom: 30px; /* 추가 여백을 줘서 간격 확보 */
   }
 }
