@@ -157,11 +157,8 @@ app.post("/api/user/updateName", authenticateToken, async (req, res) => {
 app.post("/api/user/signup", (req, res) => {
   console.log("Request body: ", req.body);
 
-  const {email, password, username } = req.body;
+  const {email, password, username, year } = req.body;
   const checkEmailQuery = "SELECT * FROM user WHERE email_address = ?";
-  console.log("Email:", email);
-  console.log("Password:", password);
-  console.log("Username:", username);
 
   
   db.query(checkEmailQuery, [email], (err, results) => {
@@ -174,8 +171,8 @@ app.post("/api/user/signup", (req, res) => {
     }
 
 
-    const insertUserQuery = "INSERT INTO cse316hw.user (email_address, password, username) VALUES (?, ?, ?)";
-    db.query(insertUserQuery, [email, password, username], (err, results) => {
+    const insertUserQuery = "INSERT INTO user (email_address, password, username, year) VALUES (?, ?, ?, ?)";
+    db.query(insertUserQuery, [email, password, username, year], (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Database error during user insertion.", err });
       }
