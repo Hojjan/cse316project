@@ -50,7 +50,7 @@ function Navbar(){
               <Link to="/insertGrade"><p>Insert Grade</p></Link>
             </li>
             <li className="hideOnMobile">
-              <Link to="/reservation" onClick={() => handleMenuClick('/reservation')}><p>Reservation</p></Link>
+              <Link to="/viewGrade" onClick={() => handleMenuClick('/viewGrade')}><p>View Grade</p></Link>
             </li>
             <li className="hideOnMobile">
               <Link to="#" className="user">

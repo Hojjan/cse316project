@@ -7,7 +7,7 @@ import { ProfileProvider } from './profileContext';
 import Navbar from './navbar';
 import Home from './homepage';
 import InsertGrade from "./insertGrade";
-import Reservation from './reservation';
+import ViewGrade from './viewGrade';
 import Userinfo from './userInfo';
 import ReservationHistory from './reservationHistory'; 
 import Signin from './signin';
