@@ -34,24 +34,19 @@ nav a:hover {
   background-color: #403f3f;
 }
 
-.center-menu{
+.navCenter-menu{
 display: flex;
 gap: 120px;
 align-items: center;
 justify-content: center;
-width: 50%;
+width: 65%;
 }
 
-.special-menu{
+.navCenter-menu p{
+  color: white;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0;
-}
-
-.center-menu p{
-color: white;
+  text-align: center;
+  margin-bottom: 0;
 }
 
 .home-button{ 

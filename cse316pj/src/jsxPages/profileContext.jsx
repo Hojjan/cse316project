@@ -32,10 +32,11 @@ export const ProfileProvider = ({ children }) => {
             alert("Session expired. Please log in again.");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            window.location.href = "/signin";
+            window.location.href = "/homepage";
             return null;
         }
     };
+    
     const fetchProfileImage = async () => {
         const userId = localStorage.getItem("userId");
         let accessToken = localStorage.getItem("accessToken");

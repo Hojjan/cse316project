@@ -36,20 +36,30 @@
   background-color: wheat;
   padding: 20px;
 }
+.containers{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .containers p{
   white-space: nowrap;
+  margin-bottom: 0;
 }
 .homeEmail-container, .homePassword-container{
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
 .containers input{
-  width: 250px;
+  width: 200px;
 }
 
 .signButtons{
+  align-items: center;
   text-align: center;
+  width: 200px;
 }
 
 .signin-signin{
@@ -60,9 +70,15 @@
 
 .signin-signup{
   border-radius: 6px;
-  width: 70px;
+  width: 75px;
   height: 30px;
   margin-left: 20px;
+}
+
+.signout-button{
+  border-radius: 6px;
+  width: 120px;
+  height: 40px;
 }
 
 .loginTitle{

@@ -45,7 +45,7 @@ function Userinfo(){
             alert("Session expired. Please log in again.");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            window.location.href = "/signin";
+            window.location.href = "/homepage";
             return null;
         }
     };

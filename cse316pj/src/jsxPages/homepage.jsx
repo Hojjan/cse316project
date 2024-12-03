@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import '../cssPages/homepage.css';
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -7,6 +7,34 @@ import { hashutil } from "../hashutil/javascript/Hashutil";
 function Home(){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    // 로그인 상태 확인
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (accessToken || refreshToken) {
+      setIsAuthenticated(true);
+      fetchUserInfo();
+    }
+  }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get('http://localhost:3001/api/user/info', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setUserInfo(response.data); // 사용자 정보 저장
+    } catch (error) {
+      console.error(error);
+      alert("Failed to fetch user information. Please sign in again.");
+      setIsAuthenticated(false);
+    }
+  };
 
   const handleSignin = () => {
     if (!email) {
@@ -18,7 +46,6 @@ function Home(){
         alert("Please enter your password.");
         return;
     }
-
 
     const hashedPassword = hashutil(email, password);
     const newAccount = {email: email, password: hashedPassword};
@@ -32,6 +59,7 @@ function Home(){
                 localStorage.setItem("userId", userId);
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
+                setIsAuthenticated(true);
                 window.location.href = '/homepage'; // redirect to homepage
             }
         })
@@ -42,6 +70,14 @@ function Home(){
                 alert("An error occurred. Please try again.");
             }
         });
+  };
+
+  const handleSignout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setIsAuthenticated(false); // 로그아웃 상태 변경
+    setUserInfo(null);
+    alert("Successfully signed out!");
   };
 
   return(
@@ -66,22 +102,52 @@ function Home(){
       <div className="homeLogin">
       <img className="ggLogo" src={'/webpageLogo.png'} alt={'webpage logo'} width={130}/>
         <p className="loginTitle"><strong>G</strong>uess <strong>G</strong>rade</p>
-          <div className="containers">
-              <div className="homeEmail-container">
-                  <p>School ID:</p>
-                  <input type="text" className="homeEmail" value={email} onChange={(e) => setEmail(e.target.value)}/>  
-              </div> 
-              <div className="homePassword-container">
-                  <p>Password:</p>
-                  <input type="password" className="homePassword" value={password} onChange={(e) => setPassword(e.target.value)}/>
+        {isAuthenticated ? (
+          <div className="loggedInContent">
+            {userInfo ? ( // userInfo가 null인지 확인
+              <div className="userInfo">
+                <p><strong>Username:</strong> {userInfo.username}</p>
+                <p><strong>Email:</strong> {userInfo.email}</p>
+                <p><strong>Year:</strong> {userInfo.year}</p>
               </div>
+            ) : (
+              <p>Loading user information...</p> // 데이터 로딩 중 메시지
+            )}
+            <p>Welcome back! You're logged in.</p>
+            <button className="signout-button" onClick={handleSignout}>
+              Sign out
+            </button>
           </div>
-          <div className="signButtons">
-              <button className="signin-signin" onClick={handleSignin}>Sign in</button>
+        ) : (
+          <div className="containers">
+            <div className="homeEmail-container">
+              <p>School ID:</p>
+              <input
+                type="text"
+                className="homeEmail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="homePassword-container">
+              <p>Password:</p>
+              <input
+                type="password"
+                className="homePassword"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="signButtons">
+              <button className="signin-signin" onClick={handleSignin}>
+                Sign in
+              </button>
               <Link to="/signup">
-                  <button className="signin-signup">Sign up</button>
+                <button className="signin-signup">Sign up</button>
               </Link>
+            </div>
           </div>
+        )}
       </div>
     </div>
   );

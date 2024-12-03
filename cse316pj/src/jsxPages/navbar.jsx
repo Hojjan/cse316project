@@ -10,24 +10,19 @@ function Navbar(){
   const navigate = useNavigate();
 
   const isAuthenticated = () => !!localStorage.getItem("accessToken");
+
   useEffect(() => {
     if (!isAuthenticated()) {
       setProfileImage("./user.png");
     }
   });
+
   const handleMenuClick = (path) => {
     if (isAuthenticated()) {
         navigate(path); 
     } else {
         alert("You must be logged in to access this page.");
-        navigate("/signin");
     }
-  };
-
-  const handleSignOut = () => {
-    localStorage.removeItem("accessToken"); 
-    window.location.reload(); 
-    alert("Succesfully Signed out!");
   };
 
   return(
@@ -45,7 +40,7 @@ function Navbar(){
           
 
           {/* codes for Facility List, Reservation, User menus on nav bar */}
-          <div className="center-menu">
+          <div className="navCenter-menu">
             <li className="hideOnMobile">
               <Link to="/insertGrade"><p>Insert Grade</p></Link>
             </li>
@@ -85,13 +80,6 @@ function Navbar(){
             {!loading && (
                         <img src={profileImage} alt="Profile" className="navbar-profile-image" />
                     )}
-            {isAuthenticated() ? (
-              <button className="nav-signin" onClick={() => handleSignOut()}>Sign out</button>
-              ) : (
-              <Link to="/signin">
-                  <button className="nav-signin">Sign in</button>
-              </Link>
-              )}
           </li> 
         </ul>
 

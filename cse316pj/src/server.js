@@ -151,6 +151,25 @@ app.post("/api/user/updateName", authenticateToken, async (req, res) => {
   }
 });
 
+app.get("/api/user/info", authenticateToken, (req, res) => {
+  const userId = req.user.id; // Access userId from the authenticated token
+
+  const query = "SELECT username, email_address AS email, year FROM user WHERE id = ?";
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Failed to fetch user information." });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    console.log(results[0]);
+    const userInfo = results[0]; // Extract user info
+    return res.status(200).json(userInfo);
+  });
+});
 
 
 
@@ -201,6 +220,7 @@ app.post("/api/user/signin", (req, res) => {
 
 
       const user = results[0]; 
+
       if (password !== user.password) {
         return res.status(401).json({ error: "Wrong password." });
       }
@@ -214,27 +234,7 @@ app.post("/api/user/signin", (req, res) => {
   });
 });
 
-app.get('/api/user', authenticateToken, (req, res) => {
-  const { userId } = req.query;
 
-  if (!userId) {
-      return res.status(400).json({ error: 'User ID is required.' });
-  }
-
-  const query = 'SELECT username FROM user WHERE id = ?';
-  db.query(query, [userId], (err, result) => {
-      if (err) {
-          console.error('Error fetching username:', err);
-          return res.status(500).json({ error: 'Failed to fetch username.' });
-      }
-
-      if (result.length === 0) {
-          return res.status(404).json({ error: 'User not found.' });
-      }
-
-      res.status(200).json({ username: result[0].username });
-  });
-});
 
 
 app.get("/api/user/profile", authenticateToken, (req, res) => {
