@@ -25,16 +25,16 @@
 
 .homeLogin{
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   right: 5%;
   width: 350px;
   margin-top: 3%;
   margin-left: 10%;
   border-radius: 20px;
   background-color: wheat;
-  padding-left: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-right: 40px;
+  padding: 20px;
 }
 .containers p{
   white-space: nowrap;
@@ -45,26 +45,30 @@
 }
 
 .containers input{
-  width: 100%;
+  width: 250px;
 }
 
 .signButtons{
   text-align: center;
 }
 
-.signin-signin, .signin-signup{
+.signin-signin{
   border-radius: 6px;
+  width: 70px;
+  height: 30px;
+}
+
+.signin-signup{
+  border-radius: 6px;
+  width: 70px;
+  height: 30px;
+  margin-left: 20px;
 }
 
 .loginTitle{
   font-size: 30px;
   text-align: center;
-  margin-left: 80px;
   margin-bottom: 10px;
-}
-
-.ggLogo{
-  margin-left: 40%;
 }
 
 @media(max-width: 1300px){

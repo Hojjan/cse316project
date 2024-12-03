@@ -10,7 +10,6 @@ import InsertGrade from "./insertGrade";
 import ViewGrade from './viewGrade';
 import Userinfo from './userInfo';
 import AskProfessor from './askProfessor'; 
-import Signin from './signin';
 import Signup from './signup';
 
 import ProtectedRoute from './ProtectedRoute';
@@ -29,7 +28,6 @@ function App() {
           <Route path="/viewGrade" element={<ProtectedRoute><ViewGrade /></ProtectedRoute>} />
           <Route path="/userInfo" element={<ProtectedRoute><Userinfo /></ProtectedRoute>} />
           <Route path="/askProfessor" element={<ProtectedRoute><AskProfessor /></ProtectedRoute>} />
-          <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           
         </Routes>
