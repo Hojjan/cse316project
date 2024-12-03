@@ -61,7 +61,6 @@ const ViewGrade = () => {
         setAttendance(attendanceRes.data);
 
         // Calculate final score and grade
-        assignments, midterm, final, gp, attendance
         calculateFinalGrade(
             assignmentRes.data, 
             midtermRes.data, 
