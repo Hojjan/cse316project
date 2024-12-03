@@ -3,28 +3,17 @@ import '../cssPages/insertGrade.css';
 import axios from 'axios';
 
 function InsertGrade(){
-  const [assignments, setAssignments] = useState([
-    { id: 1, yourGrade: ''},
-    { id: 2, yourGrade: ''},
-    { id: 3, yourGrade: ''},
-    { id: 4, yourGrade: ''},
-  ]);
+  const [assignments, setAssignments] = useState(['','','','']);
   const [midterm, setMidterm] = useState('');
   const [final, setFinal] = useState('');
   const [groupProject, setGroupProject] = useState('');
   const [attendance, setAttendance] = useState('');
 
-  const addAssignment = () => {
-    const newId = assignments.length + 1;
-    setAssignments([
-      ...assignments,
-      { id: newId, yourGrade: ''},
-    ]);
-  };
-  const removeAssignment = () => {
-    if (assignments.length > 1) {
-      setAssignments(assignments.slice(0, -1));
-    }
+
+  const handleAssignmentChange = (index, value) => {
+    const updatedAssignments = [...assignments];
+    updatedAssignments[index] = value; // 특정 인덱스의 값을 업데이트
+    setAssignments(updatedAssignments);
   };
 
   const handleConfirm = () => {
@@ -57,46 +46,20 @@ function InsertGrade(){
             <p><strong>Your Grade </strong></p>
             <p><strong>Total Grade</strong></p>
           </div>
-          
-          {assignments.map((asmt) => (
-            <div className="asmtContainer" key={asmt.id}>
-              <p>Assignment {asmt.id}:</p>
-              <div className="asmtInput">
+          {assignments.map((assignment, index) => (
+            <div className='asmtContainer' key={index}>
+              <p>Assignment {index + 1}:</p>
+              <div className='asmtInput'>
                 <input
                   type="text"
-                  className="asmtGrd"
-                  value={asmt.yourGrade}
-                  onChange={(e) => {
-                    const updatedAssignments = assignments.map((assignment) =>
-                      assignment.id === asmt.id
-                        ? { ...assignment, yourGrade: e.target.value }
-                        : assignment
-                    );
-                    setAssignments(updatedAssignments);
-                  }}
+                  className="amstGrd"
+                  value={assignment}
+                  onChange={(e) => handleAssignmentChange(index, e.target.value)}
                 />
-                <p><strong>{asmt.id === 1 ? "/ 225" : ""}</strong></p>
+                <p><strong>{index === 3 ? '/ 75' : '/ 50'}</strong></p>
               </div>
             </div>
           ))}
-          <div className='asmtIcons'>
-            <img
-              src={'/add.png'}
-              alt={'add icon'}
-              width={"40px"}
-              style={{ cursor: "pointer" }}
-              onClick={addAssignment}
-            />
-
-            <img
-              src={'/remove.png'}
-              alt={'subtract icon'}
-              width={"40px"}
-              style={{ cursor: "pointer" }}
-              onClick={removeAssignment}
-            />
-            
-          </div>
         </div>
         
         <div className='tests'>

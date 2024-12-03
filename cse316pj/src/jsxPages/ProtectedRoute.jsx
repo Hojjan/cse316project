@@ -8,7 +8,7 @@ function isAuthenticated() {
 }
 
 function ProtectedRoute({ children }) {
-    return isAuthenticated() ? children : <Navigate to="/signin" />;
+    return isAuthenticated() ? children : <Navigate to="/homepage" />;
 }
 
 export default ProtectedRoute;
