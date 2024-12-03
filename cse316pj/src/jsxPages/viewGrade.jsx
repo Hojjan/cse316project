@@ -6,10 +6,10 @@ import "../cssPages/viewGrade.css";
 
 const ViewGrade = () => {
   const [assignments, setAssignments] = useState();
-  const [midterm, setMidterm] = useState();
-  const [final, setFinal] = useState();
-  const [gp, setGps] = useState();
-  const [attendance, setAttendance] = useState();
+  const [midterm, setMidterm] = useState(0);
+  const [final, setFinal] = useState(0);
+  const [gp, setGps] = useState(0);
+  const [attendance, setAttendance] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [letterGrade, setLetterGrade] = useState("N/A");
   const [assignmentStdDev, setAssignmentStdDev] = useState(0);
@@ -32,30 +32,30 @@ const ViewGrade = () => {
         }
 
         // Fetch individual assignment grades
-        const assignmentRes = await axios.get("http://localhost:3001/grades/assignments", {
+        const assignmentRes = await axios.get("http://localhost:3001/api/grades/assignments", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAssignments(assignmentRes.data);
 
         // Fetch individual midterm scores
-        const midtermRes = await axios.get("http://localhost:3001/grades/midterm", {
+        const midtermRes = await axios.get("http://localhost:3001/api/grades/midterm", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMidterm(midtermRes.data);
 
-        const finalRes = await axios.get("http://localhost:3001/grades/final", {
+        const finalRes = await axios.get("http://localhost:3001/api/grades/final", {
             headers: { Authorization: `Bearer ${token}` },
         });
         setFinal(finalRes.data);
 
         // Fetch individual group project scores
-        const gpRes = await axios.get("http://localhost:3001/grades/final", {
+        const gpRes = await axios.get("http://localhost:3001/api/grades/final", {
             headers: { Authorization: `Bearer ${token}` },
         });
         setGps(gpRes.data);
 
         // Fetch individual attendance scores
-        const attendanceRes = await axios.get("http://localhost:3001/grades/attendance", {
+        const attendanceRes = await axios.get("http://localhost:3001api//grades/attendance", {
             headers: { Authorization: `Bearer ${token}` },
         });
         setAttendance(attendanceRes.data);
@@ -69,7 +69,7 @@ const ViewGrade = () => {
             attendanceRes.data);
 
         // Fetch all users' grades
-        const allGradesRes = await axios.get("http://localhost:3001/grades/all", {
+        const allGradesRes = await axios.get("http://localhost:3001/api/grades/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

@@ -10,6 +10,8 @@ function Signup(){
     const [checkpw, setCheckpw] = useState('');
     const [username, setUsername] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
+    const [agree, setAgree] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     React.useEffect(() => {
         document.body.classList.add('page-white-bg');
@@ -19,6 +21,10 @@ function Signup(){
     }, []);
 
     const handleSignup = () => {
+        if (!agree) {
+            alert("Agreement to the FERPA rules is required to sign up!");
+            return;
+        }
         if (!email) {
             alert("Email is not entered.");
             return;
@@ -50,6 +56,7 @@ function Signup(){
                 setPassword("");
                 setCheckpw("");
                 setUsername("");
+                setAgree(false);
             })
             .catch((error) => {
                 if (error.response) {
@@ -94,9 +101,48 @@ function Signup(){
                     </select>
                 </div>
             </div>
+            {/* FERPA Rules Agreement */}
+            <div className="agreement-section">
+                <button onClick={() => setShowModal(true)} className="view-ferparules">
+                    FERPA Rules Agreement
+                </button>
+                <div className="form-check">
+                    <input
+                        type="checkbox"
+                        id="agree"
+                        className="form-check-input"
+                        checked={agree}
+                        onChange={() => setAgree(!agree)}
+                    />
+                    <label htmlFor="agree" className="form-check-label ms-3">
+                        By checking this box, I agree to the FERPA Rules
+                    </label>
+                </div>
+            </div>
             <div className="signButton">
                 <button className="signup-signup" onClick={handleSignup}>Sign up</button>
             </div>
+            {/* Modal for FERPA RULES */}
+            {showModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2>FERPA Rules</h2>
+                        <p>
+                        The Family Educational Rights and Privacy Act (FERPA) is a federal law 
+                        that affords parents the right to have access to their children’s education records, 
+                        the right to seek to have the records amended, and the right to have some control 
+                        over the disclosure of personally identifiable information from the education records. 
+                        When a student turns 18 years old, or enters a postsecondary institution at any age, the rights 
+                        under FERPA transfer from the parents to the student (“eligible student”). 
+                        The FERPA statute is found at 20 U.S.C. § 1232g and the FERPA regulations are found at 34 CFR Part 99. 
+                        By agreeing, you acknowledge that you understand your rights and responsibilities under FERPA.
+                        </p>
+                        <button className="close-modal" onClick={() => setShowModal(false)}>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
