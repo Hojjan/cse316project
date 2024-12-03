@@ -39,7 +39,7 @@
 .containers p{
   white-space: nowrap;
 }
-.email-container, .password-container{
+.homeEmail-container, .homePassword-container{
   display: flex;
   gap: 15px;
 }
@@ -50,6 +50,10 @@
 
 .signButtons{
   text-align: center;
+}
+
+.signin-signin, .signin-signup{
+  border-radius: 6px;
 }
 
 .loginTitle{

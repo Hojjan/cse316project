@@ -26,13 +26,13 @@ function Home(){
       <img className="ggLogo" src={'/webpageLogo.png'} alt={'webpage logo'} width={130}/>
         <p className="loginTitle"><strong>G</strong>uess <strong>G</strong>rade</p>
           <div className="containers">
-              <div className="email-container">
+              <div className="homeEmail-container">
                   <p>School ID:</p>
-                  <input type="text" className="email"  />  
+                  <input type="text" className="homeEmail"  />  
               </div> 
-              <div className="password-container">
+              <div className="homePassword-container">
                   <p>Password:</p>
-                  <input type="password" className="password" />
+                  <input type="password" className="homePassword" />
               </div>
           </div>
           <div className="signButtons">

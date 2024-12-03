@@ -9,6 +9,7 @@ function Signup(){
     const [password, setPassword] = useState('');
     const [checkpw, setCheckpw] = useState('');
     const [username, setUsername] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
 
     React.useEffect(() => {
         document.body.classList.add('page-white-bg');
@@ -65,21 +66,33 @@ function Signup(){
     return(
         <div className="wholeSignUp">
             <p className="title">Sign up</p>
-            <div className="email-container">
-                <p>E-mail</p>
-                <input type="text" className="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            </div> 
-            <div className="password-container">
-                <p>Password</p>
-                <input type="text" className="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </div>
-            <div className="password-container">
-                <p>Password Check</p>
-                <input type="text" className="password-check" value={checkpw} onChange={(e) => setCheckpw(e.target.value)}/>
-            </div>
-            <div className="username">
-                <p>User Name</p>
-                <input type="text" className="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+            <div className="signUp-container">
+                <div className="email-container">
+                    <p>E-mail</p>
+                    <input type="text" className="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                </div> 
+                <div className="password-container">
+                    <p>Password</p>
+                    <input type="password" className="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                </div>
+                <div className="passwordCheck-container">
+                    <p>Password Check</p>
+                    <input type="password" className="password-check" value={checkpw} onChange={(e) => setCheckpw(e.target.value)}/>
+                </div>
+                <div className="username-container">
+                    <p>User Name</p>
+                    <input type="text" className="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                </div>
+                <div className="dropdown-container">
+                    <p>Academic Year</p>
+                    <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="dropdown">
+                        <option value="">-- Select Year --</option>
+                        <option value="Freshman">Freshman</option>
+                        <option value="Sophomore">Sophomore</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Senior">Senior</option>
+                    </select>
+                </div>
             </div>
             <div className="signButton">
                 <button className="signup-signup" onClick={handleSignup}>Sign up</button>

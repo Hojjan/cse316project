@@ -86,10 +86,10 @@ function Navbar(){
                         <img src={profileImage} alt="Profile" className="navbar-profile-image" />
                     )}
             {isAuthenticated() ? (
-              <button className="signin" onClick={() => handleSignOut()}>Sign out</button>
+              <button className="nav-signin" onClick={() => handleSignOut()}>Sign out</button>
               ) : (
               <Link to="/signin">
-                  <button className="signin">Sign in</button>
+                  <button className="nav-signin">Sign in</button>
               </Link>
               )}
           </li> 
