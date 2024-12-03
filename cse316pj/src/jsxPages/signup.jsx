@@ -57,6 +57,7 @@ function Signup(){
                 setPassword("");
                 setCheckpw("");
                 setUsername("");
+                setSelectedYear("");
                 setAgree(false);
             })
             .catch((error) => {
