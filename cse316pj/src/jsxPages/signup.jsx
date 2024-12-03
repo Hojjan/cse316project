@@ -20,6 +20,7 @@ function Signup(){
         };
     }, []);
 
+
     const handleSignup = () => {
         if (!agree) {
             alert("Agreement to the FERPA rules is required to sign up!");
@@ -124,24 +125,40 @@ function Signup(){
             </div>
             {/* Modal for FERPA RULES */}
             {showModal && (
-                <div className="modal">
+            <div className="modal" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                <div className="modal-dialog">
                     <div className="modal-content">
-                        <h2>FERPA Rules</h2>
-                        <p>
-                        The Family Educational Rights and Privacy Act (FERPA) is a federal law 
-                        that affords parents the right to have access to their children’s education records, 
-                        the right to seek to have the records amended, and the right to have some control 
-                        over the disclosure of personally identifiable information from the education records. 
-                        When a student turns 18 years old, or enters a postsecondary institution at any age, the rights 
-                        under FERPA transfer from the parents to the student (“eligible student”). 
-                        The FERPA statute is found at 20 U.S.C. § 1232g and the FERPA regulations are found at 34 CFR Part 99. 
-                        By agreeing, you acknowledge that you understand your rights and responsibilities under FERPA.
-                        </p>
-                        <button className="close-modal" onClick={() => setShowModal(false)}>
+                        {/* Modal-header */}
+                        <div className="modal-header">
+                            <h5 className="modal-title">FERPA Rules</h5>
+                            <button className="btn-close" onClick={() => setShowModal(false)}></button>
+                        </div>
+                        {/* Modal-body */}
+                        <div className="modal-body">
+                            <p>
+                            The Family Educational Rights and Privacy Act (FERPA) is a federal law that affords parents the right to
+                            have access to their children’s education records, the right to seek to have the records amended, and the
+                            right to have some control over the disclosure of personally identifiable information from the education
+                            records.
+                            </p>
+                            <p>
+                            When a student turns 18 years old, or enters a postsecondary institution at any age, the rights under FERPA
+                            transfer from the parents to the student (“eligible student”).
+                            </p>
+                            <p>
+                            The FERPA statute is found at 20 U.S.C. § 1232g and the FERPA regulations are found at 34 CFR Part 99. By
+                            agreeing, you acknowledge that you understand your rights and responsibilities under FERPA.
+                            </p>
+                        </div>
+                        {/* Modal-footer */}
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
                             Close
-                        </button>
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
             )}
         </div>
     );
