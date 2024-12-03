@@ -26,7 +26,7 @@ function App() {
           <Route path="/" element={<Navigate to="/homepage" replace />} /> 
           <Route path="/homepage" element={<Home />} />
           <Route path="/insertGrade" element={<InsertGrade />} />
-          <Route path="/reservation" element={<ProtectedRoute><Reservation /></ProtectedRoute>} />
+          <Route path="/viewGrade" element={<ProtectedRoute><ViewGrade /></ProtectedRoute>} />
           <Route path="/userInfo" element={<ProtectedRoute><Userinfo /></ProtectedRoute>} />
           <Route path="/reservationHistory" element={<ProtectedRoute><ReservationHistory /></ProtectedRoute>} />
           <Route path="/signin" element={<Signin />} />
