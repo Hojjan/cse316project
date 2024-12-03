@@ -53,6 +53,9 @@ function Navbar(){
               <Link to="/viewGrade" onClick={() => handleMenuClick('/viewGrade')}><p>View Grade</p></Link>
             </li>
             <li className="hideOnMobile">
+              <Link to="/askProfessor" onClick={() => handleMenuClick('/askProfessor')}><p>Ask Professor</p></Link>
+            </li>
+            <li className="hideOnMobile">
               <Link to="#" className="user">
                 <p>User</p>
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
