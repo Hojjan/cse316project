@@ -1,0 +1,98 @@
+.gradeWholeContainer{
+    display: flex;
+    gap: 100px;
+}
+
+.gradeWholeContainer input{
+    background-color: white;
+}
+
+.assignments, .tests, .groupProject{
+    margin-left: 70px;
+    margin-top: 50px;
+}
+
+.asmtGradeDist{
+    display: flex;
+    gap: 15px;
+    margin-left: 110px;
+}
+
+.attdGradeDist{
+    display: flex;
+    gap: 15px;
+    margin-left: 100px;
+}
+
+.testGradeDist{
+    display: flex;
+    gap: 13px;
+    margin-left: 115px;
+}
+
+.asmtGradeDist p, .testGradeDist p, .attdGradeDist p{
+    margin-bottom: 0;
+}
+
+.asmtContainer, .gpContainer{
+    display: flex;
+    gap: 15px;
+}
+
+.testContainer{
+    display: flex;
+    gap: 15px;
+    margin-left: 42px;
+}
+
+.finalTestContainer{
+    display: flex;
+    gap: 15px;
+    margin-left: 65px;
+}
+.attdContainer{
+    display: flex;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.asmtInput, .testInput{
+    display: flex;
+    gap: 6px;
+}
+
+.asmtInput input, .testInput input{
+    width: 80px;
+}
+
+.asmtInput p, .testInput p{
+    font-size: 25px;
+    text-align: center;
+    margin: 15px 0;
+}
+
+
+.asmtIcons{
+    margin-left: 120px;
+    display: flex;
+    gap: 10px;
+}
+
+.assignments img{
+    border-radius: 50%;
+    background-color: azure;
+    border: 5px solid #299b9b;
+
+}
+
+.confirmBtn{
+    position: fixed;
+    bottom: 10%;
+    right: 10%;
+    width: 120px;
+    height: 40px;
+    background-color: white;
+    border: 2px solid black;
+    color: black;
+    font-size: large;
+}

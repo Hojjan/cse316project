@@ -29,7 +29,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'hochan2001!', 
-  database: 'cse316hw'
+  database: 'cse316pj'
 });
 
 db.connect((err) => {
@@ -39,6 +39,30 @@ db.connect((err) => {
     console.log('Connected to MySQL');
   }
 }); 
+
+//insert Grade //////////////////////////////////////////////////////////////////////////////////
+app.post('/api/grades', (req, res) => {
+  const { assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance } = req.body;
+  console.log(req.body);
+  const query = `
+    INSERT INTO grades (assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    query,
+    [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance],
+    (err, result) => {
+      if (err) {
+        console.error('Error inserting data:', err);
+        return res.status(500).json({ error: 'Failed to save grades' });
+      }
+      res.status(200).json({ message: 'Grades saved successfully' });
+    }
+  );
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/api/user/uploadProfileImage", authenticateToken, upload.single("image"), async (req, res) => {
   const { userId } = req.body;
@@ -76,29 +100,6 @@ app.post("/api/user/uploadProfileImage", authenticateToken, upload.single("image
 });
 
 
-
-app.get('/api/facilities', (req, res) => {
-  const query = 'SELECT * FROM cse316hw.facilities';
-  db.query(query, (err, results) => {
-    if (err) { return res.status(500).json({ error: "Failed to fetch facilities" });} 
-    else {return res.status(200).json(results);}
-  });
-});
-
-
-
-app.get('/api/reservation', authenticateToken, (req, res) => {
-  const query = 'SELECT * FROM cse316hw.reservation';
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching reservation data:', err);
-      return res.status(500).json({ error: 'Failed to retrieve reservations' });
-    } 
-    return res.status(200).json(results);
-    
-  });
-});
 
 app.post("/api/user/updatePassword", authenticateToken, async (req, res) => {
   const { userId, hashedPassword } = req.body;
@@ -148,80 +149,6 @@ app.post("/api/user/updateName", authenticateToken, async (req, res) => {
       console.error("Error updating name:", error);
       res.status(500).json({ error: "Internal server error." });
   }
-});
-
-
-
-app.post('/api/reservation', authenticateToken, (req, res) => {
-  const { facility, date, numPeople, suny, purpose, src, location, username } = req.body;
-
-  db.beginTransaction((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Failed to start transaction' });
-    }
-
-    const query = `
-      INSERT INTO reservation 
-      (reservation_date, user_number, is_suny, purpose, reservation_name, user_name, location, image_src) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    db.query(query, [date, numPeople, suny, purpose, facility, username, location, src], (err, result) => {
-      if (err) {
-        return db.rollback(() => {
-          res.status(500).json({ error: 'Failed to save reservation', details: err.message });
-        });
-      }
-
-      db.commit((err) => {
-        if (err) {
-          return db.rollback(() => {
-            res.status(500).json({ error: 'Failed to commit transaction' });
-          });
-        }
-        res.status(200).json({ message: 'Reservation successful!' });
-      });
-    });
-  });
-
-});
-
-app.delete('/api/reservation/:id', authenticateToken, (req, res) => {
-  const reservationId = req.params.id;
-  
-  db.beginTransaction((err) => {
-    if (err) {
-      console.error('Error starting transaction:', err);
-      return res.status(500).json({ error: 'Failed to start transaction' });
-    }
-
-    const query = 'DELETE FROM reservation WHERE id = ?';
-
-    db.query(query, [reservationId], (err, result) => {
-      if (err) {
-        console.error('Error deleting reservation:', err);
-        return db.rollback(() => {
-          res.status(500).json({ error: 'Failed to delete reservation' });
-        });
-      }
-      
-      if (result.affectedRows === 0) {
-        return db.rollback(() => {
-          res.status(404).json({ message: 'No reservation found with the given ID' });
-        });
-      }
-
-      db.commit((err) => {
-        if (err) {
-          return db.rollback(() => {
-            res.status(500).json({ error: 'Failed to commit transaction' });
-          });
-        }
-        console.log(`Deleted reservation with ID: ${reservationId}`); 
-        res.status(200).json({ message: 'Reservation deleted successfully' });
-      });
-    });
-  });
 });
 
 
