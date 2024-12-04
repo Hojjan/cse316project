@@ -310,7 +310,7 @@ app.post('/api/token/refresh', (req, res) => {
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) {return res.sendStatus(403);} 
 
-      const accessToken = genAccTok({ id: user.id, email: user.email });
+      const accessToken = genAccTok({ user });
       return res.status(200).json({ accessToken: accessToken }); 
   });
 });
@@ -325,50 +325,61 @@ app.post('/api/questions', (req, res) => {
     return res.status(401).json({ error: 'Access token is missing.' });
   }
 
-  try {
-    const decoded = jwt.decode(token);
-    const userEmail = decoded?.email;
+  // Verify and decode JWT token
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      console.error('Invalid or expired token:', err);
+      return res.status(403).json({ error: 'Invalid or expired token.' });
+    }
 
+    const userEmail = decoded.email;
     if (!userEmail) {
       console.error('User email is missing from token.');
       return res.status(400).json({ error: 'User email is missing from token.' });
     }
 
     const { question } = req.body;
-    if (!question) {
+    if (!question || question.trim() === '') {
       console.error('Question is required but not provided.');
       return res.status(400).json({ error: 'Question is required.' });
     }
 
+    // Insert the question into the database
     const query = 'INSERT INTO questions (question_text, user_email) VALUES (?, ?)';
     db.query(query, [question, userEmail], (err, result) => {
       if (err) {
         console.error('Error inserting question into database:', err);
         return res.status(500).json({ error: 'Failed to save question.' });
       }
+
       console.log('Question successfully saved:', result);
-      res.status(200).send('Question successfully uploaded!');
+      res.status(201).json({
+        message: 'Question successfully uploaded!',
+        questionId: result.insertId,
+        questionText: question,
+        userEmail: userEmail,
+      });
     });
-  } catch (err) {
-    console.error('Error decoding token:', err);
-    res.status(403).json({ error: 'Invalid token.' });
-  }
+  });
 });
 
 
-// get questions
-app.get('/api/questions', (req, res) => {
-  const query = 'SELECT * FROM questions ORDER BY id';
 
-  db.query(query, (err, results) => {
+// get questions
+app.get('/api/questions', authenticateToken, (req, res) => {
+  const userEmail = req.user.email;
+
+  const query = `SELECT id, question_text, user_email FROM questions WHERE user_email = ?`;
+
+  db.query(query, [userEmail], (err, results) => {
     if (err) {
       console.error('Error fetching questions:', err);
       return res.status(500).json({ error: 'Failed to fetch questions.' });
     }
-    console.log(results);
     res.status(200).json(results);
   });
 });
+
 
 //delete questions
 app.delete('/api/questions/:id', (req, res) => {
