@@ -281,7 +281,7 @@ app.post('/api/questions', authenticateToken, (req, res) => {
     return res.status(400).json({ error: 'Question is required.' });
   }
 
-  const query = 'INSERT INTO questions (question) VALUES (?)';
+  const query = 'INSERT INTO questions VALUES (?)';
   db.query(query, [question], (err, result) => {
     if (err) {
       console.error('Error inserting question:', err);
