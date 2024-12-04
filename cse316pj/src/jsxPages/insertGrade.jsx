@@ -17,6 +17,15 @@ function InsertGrade(){
   };
 
   const handleConfirm = () => {
+    if (assignments.some(assignment => assignment.trim() === '') ||
+      midterm.trim() === '' ||
+      final.trim() === '' ||
+      groupProject.trim() === '' ||
+      attendance.trim() === '') {
+      alert("Please fill out all input fields before confirming.");
+      return; // Stop further execution
+    }
+
     const gradesData = {
       assignment1: assignments[0]?.yourGrade || null,
       assignment2: assignments[1]?.yourGrade || null,

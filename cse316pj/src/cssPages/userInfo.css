@@ -2,12 +2,11 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    margin-top: 100px;
-
+    margin-top: 130px;
 }
 
 .change p {
-    margin-bottom: 30px;
+    margin-bottom: 0px;
 }
 
 .circle-image {
@@ -18,10 +17,10 @@
 }
 
 #change-image {
-    border-radius: 3px;
-    width: 110px;
-    height: 25px;
-    margin-top: 15px;
+    border-radius: 10px;
+    width: 120px;
+    height: 30px;
+    margin: 15px 0;
     background-color: lavender;
     color: black;
     border: 1px solid black;
@@ -29,9 +28,9 @@
 }
 
 #change-password{
-    border-radius: 3px;
+    border-radius: 10px;
     width: 140px;
-    height: 25px;
+    height: 30px;
     margin-left: 0px;
     background-color: lavender;
     color: black;
@@ -40,9 +39,9 @@
 }
 
 #change-name {
-    border-radius: 3px;
+    border-radius: 10px;
     width: 110px;
-    height: 25px;
+    height: 30px;
     margin-top: 0px;
     background-color: lavender;
     color: black;
@@ -65,15 +64,16 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     border-radius: 5px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px 0;
 }
 
 
-.image-popup{
+.popup .image-popup{
     width: 500px;
     height: 260px;
+    padding-top: 20px;
 }
+
 
 .popup-inner h3{
     text-align: left;
@@ -95,9 +95,8 @@
     margin-bottom: 0;
 }
 
-button{
+.popup-inner button{
     cursor: pointer;
-    margin-bottom: 10px;
 }
 
 input {
@@ -120,26 +119,27 @@ input {
     gap: 10px;
 }
 
-.image-popup #closeBtn{
+.image-popup .closeBtn{
     background-color: #6e6e6e;
     color: white;
 }
-
-#closeBtn {
+.closeBtn {
     background-color: #e0e0e0;
     color: #333;
-
+    border-radius: 10px;
 }
 
 /* 저장 버튼 스타일 */
-#saveBtn {
-    width: 100px;
+.saveBtn {
+    width: 130px;
+    height: 30px;
     background-color: #007bff;
     color: white;
+    border-radius: 10px;
 }
 
 .uploadBtn{
-    width: 100px;
+    width: 130px;
     height: 34px;
     border-radius: 10px;
 }
@@ -154,3 +154,12 @@ input {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
+
+.password-info, .name-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+    gap: 10px;
+}
+

@@ -338,12 +338,12 @@ function Userinfo(){
             <div className="change">
                 <div>
                     <p>Email: {email}</p>
-                        <div>
+                        <div className="password-info">
                             <p>Password: ********* </p>
                             <button id="change-password" onClick={passwordPopup} style={buttonStyle("password")}>Change Password</button>
                         </div>
                 </div>
-                <div>
+                <div className="name-info">
                     <p>Name: {username} </p>
                     <button id="change-name" onClick={namePopup} style={buttonStyle("name")}>Change Name</button>
                 </div>
@@ -364,7 +364,7 @@ function Userinfo(){
                                         <button className="uploadBtn" onClick={handleImageUpload}>Upload Image</button>
                                     </div>
                                     <div className="popUpButtons">
-                                        <button id="closeBtn" onClick={closePopup}>Close</button>
+                                        <button className="closeBtn" onClick={closePopup}>Close</button>
                                     </div>
                                 </>
                             ) : activeButton === "name" ? (
@@ -373,8 +373,8 @@ function Userinfo(){
                                         {popContent}
                                     </div>
                                     <div className="popUpButtons">
-                                        <button id="closeBtn" onClick={closePopup}>Close</button>
-                                        <button id="saveBtn" onClick={handleNameChange}>Save changes</button>
+                                        <button className="closeBtn" onClick={closePopup}>Close</button>
+                                        <button className="saveBtn" onClick={handleNameChange}>Save changes</button>
                                     </div>
                                 </>
                             ) : (
@@ -383,8 +383,8 @@ function Userinfo(){
                                         {popContent}
                                     </div>
                                     <div className="popUpButtons">
-                                        <button id="closeBtn" onClick={closePopup}>Close</button>
-                                        <button id="saveBtn" onClick={handlePasswordVerify}>Save changes</button>
+                                        <button className="closeBtn" onClick={closePopup}>Close</button>
+                                        <button className="saveBtn" onClick={handlePasswordVerify}>Save changes</button>
                                     </div>
                                 </>
                             )}
