@@ -79,10 +79,13 @@ function Navbar(){
         {/* hamburger menu details */}
         <ul className="hamburger">
           <li>
-            <Link to="/facilityList">Facility List</Link>
+            <Link to="/insertGrade">Insert Grade</Link>
           </li>
           <li>
-            <Link to="/reservation" onClick={() => handleMenuClick('/reservation')}>Facility Reservation</Link>
+            <Link to="/viewGrade" onClick={() => handleMenuClick('/viewGrade')}>View Grade</Link>
+          </li>
+          <li>
+            <Link to="/askProfessor" onClick={() => handleMenuClick('/askProfessor')}>Ask Professor</Link>
           </li>
           <li>
             <Link to="/userInfo" onClick={() => handleMenuClick('/userInfo')}>User Information</Link>
