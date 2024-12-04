@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import '../cssPages/insertGrade.css';
 import axios from 'axios';
 
@@ -8,6 +8,33 @@ function InsertGrade(){
   const [final, setFinal] = useState('');
   const [groupProject, setGroupProject] = useState('');
   const [attendance, setAttendance] = useState('');
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      try {
+        const token = localStorage.getItem("accessToken"); // 토큰 이름을 accessToken으로 변경
+        if (!token) {
+          console.error("No authentication token found.");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:3001/api/user/info", {
+          headers: {
+            Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
+          },
+        });
+
+        const userEmail = response.data.email; // 서버에서 받은 email 데이터
+        setEmail(userEmail); // 이메일 상태로 설정
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+        alert("Failed to fetch user information.");
+      }
+    };
+
+    fetchUserEmail();
+  }, []);
 
 
   const handleAssignmentChange = (index, value) => {
@@ -27,14 +54,15 @@ function InsertGrade(){
     }
 
     const gradesData = {
-      assignment1: assignments[0]?.yourGrade || null,
-      assignment2: assignments[1]?.yourGrade || null,
-      assignment3: assignments[2]?.yourGrade || null,
-      assignment4: assignments[3]?.yourGrade || null,
+      assignment1: assignments[0] || null,
+      assignment2: assignments[1] || null,
+      assignment3: assignments[2] || null,
+      assignment4: assignments[3] || null,
       midterm,
       final,
       group_project: groupProject,
       attendance,
+      email
     };
 
     axios.post('http://localhost:3001/api/grades', gradesData)
