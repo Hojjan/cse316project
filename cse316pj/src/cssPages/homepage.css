@@ -94,7 +94,7 @@
 @media(max-width: 1300px){
   .homeLogin{
     position: absolute;
-    left: 700px;
+    left: 750px;
     margin-left: 10%;
   }
 }
@@ -107,7 +107,7 @@
   .homeLogin {
     position: static; /* 절대 위치를 제거하고 기본 흐름으로 배치 */
     margin: 20px 4%; /* 위아래 여백 추가 및 가운데 정렬 */
-    width: 80%; /* 뷰포트에 맞게 너비를 조정 */
+    width: 90%; /* 뷰포트에 맞게 너비를 조정 */
   }
 
   .homeWholeText {

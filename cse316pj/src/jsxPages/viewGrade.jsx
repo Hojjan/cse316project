@@ -175,11 +175,9 @@ const ViewGrade = () => {
     const scores = data.map(row => row[key]);
     const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
     scores.forEach(score => {
-      if (score <= 70) {
-        const binIndex = Math.floor(score / 10);
+      if (score <= 75) { 
+        const binIndex = score === 75 ? 7 : Math.floor(score / 10); // 75는 마지막 bin에 포함
         histogram[binIndex]++;
-      } else if (score <= 75) {
-        histogram[7]++; // Last bin for scores between 70-75
       }
     });
     setHistogram(histogram);
@@ -190,7 +188,7 @@ const ViewGrade = () => {
     const histogram = Array(5).fill(0); // 5 bins: 0-10, 10-20, ..., 40-50
     scores.forEach(score => {
       if (score <= 50) {
-        const binIndex = Math.floor(score / 10);
+        const binIndex = score === 50 ? 4 : Math.floor(score / 10); // 125는 마지막 bin에 포함
         histogram[binIndex]++;
       }
     });
@@ -202,7 +200,7 @@ const ViewGrade = () => {
     const histogram = Array(5).fill(0);
     scores.forEach(score => {
       if (score <= 125) {
-        const binIndex = Math.floor(score / 25);
+        const binIndex = score === 125 ? 4 : Math.floor(score / 25); // 125는 마지막 bin에 포함
         histogram[binIndex]++;
       }
     });
@@ -221,13 +219,13 @@ const ViewGrade = () => {
     );
     console.log("total asmt scores: ", totalScores);
     
-    const histogram = Array(5).fill(0); // 5 bins: 0-25, 25-50, ...., 200-225
+    const histogram = Array(9).fill(0); // 5 bins: 0-25, 25-50, ...., 200-225
     totalScores.forEach(score => {
-        if (score <= 225) {
-          const binIndex = Math.floor(score / 25);
-          histogram[binIndex]++;
-        }
-      });
+      if (score <= 225) {
+        const binIndex = score === 225 ? 8 : Math.floor(score / 25); // 225는 마지막 bin에 포함
+        histogram[binIndex]++;
+      }
+    });
       setHistogram(histogram);
   };
   
@@ -350,7 +348,7 @@ const ViewGrade = () => {
               labels: ["0-25", "25-50", "50-75", "75-100", "100-125", "125-150", "150-175", "175-200", "200-225"],
               datasets: [
                 {
-                  label: "Total Assignment Scores",
+                  label: "Number of Students",
                   data: assignmentsHistogramData, // 계산된 히스토그램 데이터
                   backgroundColor: "rgba(75, 192, 192, 0.6)",
                 },
