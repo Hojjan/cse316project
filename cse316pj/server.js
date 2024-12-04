@@ -207,7 +207,8 @@ app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
       console.error("Database error:", err);
       return res.status(500).json({ error: "Failed to fetch filtered grades." });
     }
-  
+    
+    console.log(results);
     res.status(200).json(results); // 필터링된 데이터 반환
   });
 });

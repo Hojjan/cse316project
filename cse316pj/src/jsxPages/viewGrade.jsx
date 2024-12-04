@@ -105,9 +105,15 @@ const ViewGrade = () => {
           }
         );
         setFilteredGrades(filteredGradesRes.data);
-        console.log("Filtered Grades: ", filteredGrades);
+        console.log("Filtered Grades: ", filteredGradesRes.data);
 
-        const scores = filteredGrades.map(row => row[5]); // Assuming 'final' is the 6th column (index 5)
+        filteredGradesRes.data.forEach((row, index) => {
+          console.log(`Row ${index}:`, row);
+        });
+
+        const scores = filteredGradesRes.data.map(row => row.final); // Assuming 'final' is the 6th column (index 5)
+        console.log("scores: ", scores);///////////////////////////////////
+        
         setFinalScores(scores);
         const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
         scores.forEach(score => {
