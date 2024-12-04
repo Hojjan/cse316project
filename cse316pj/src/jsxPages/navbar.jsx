@@ -42,7 +42,7 @@ function Navbar(){
           {/* codes for Facility List, Reservation, User menus on nav bar */}
           <div className="navCenter-menu">
             <li className="hideOnMobile">
-              <Link to="/insertGrade"><p>Insert Grade</p></Link>
+              <Link to="/insertGrade" onClick={() => handleMenuClick('/insertGrade')}><p>Insert Grade</p></Link>
             </li>
             <li className="hideOnMobile">
               <Link to="/viewGrade" onClick={() => handleMenuClick('/viewGrade')}><p>View Grade</p></Link>

@@ -42,16 +42,16 @@ db.connect((err) => {
 
 //insert Grade //////////////////////////////////////////////////////////////////////////////////
 app.post('/api/grades', (req, res) => {
-  const { assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance } = req.body;
+  const { assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email } = req.body;
   console.log(req.body);
   const query = `
-    INSERT INTO grades (assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO grades (assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email_address)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     query,
-    [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance],
+    [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email],
     (err, result) => {
       if (err) {
         console.error('Error inserting data:', err);
@@ -165,12 +165,55 @@ app.get("/api/user/info", authenticateToken, (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    console.log(results[0]);
     const userInfo = results[0]; // Extract user info
     return res.status(200).json(userInfo);
   });
 });
 
+app.get('/api/grades/all', authenticateToken, (req, res) => {
+  const userId = req.user.id; // Access userId from the authenticated token
+
+  const query = `
+    SELECT 
+      assignment1, assignment2, assignment3, assignment4, 
+      midterm, final, group_project, attendance 
+    FROM grades 
+    WHERE user_id = ?`;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Failed to fetch grades." });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No grades found for the user." });
+    }
+
+    res.status(200).json(results[0]); // Return the grades for the user
+  });
+});
+
+app.get('/api/grades/alluser', authenticateToken, (req, res) => {
+  const query = `
+    SELECT 
+      user_id, assignment1, assignment2, assignment3, assignment4, 
+      midterm, final, group_project, attendance 
+    FROM grades`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Failed to fetch all users' grades." });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No grades found." });
+    }
+
+    res.status(200).json(results); // Return all grades
+  });
+});
 
 
 app.post("/api/user/signup", (req, res) => {

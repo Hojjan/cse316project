@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale, // "category" 스케일
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 import Navbar from "./navbar";
 import "../cssPages/viewGrade.css";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 const ViewGrade = () => {
+  const [email, setEmail] = useState("");
   const [assignments, setAssignments] = useState();
   const [midterm, setMidterm] = useState(0);
   const [final, setFinal] = useState(0);
@@ -23,76 +42,78 @@ const ViewGrade = () => {
   });
 
   useEffect(() => {
-    const fetchGrades = async () => {
+    const fetchUserEmail = async () => {
       try {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("accessToken"); // 토큰 이름을 accessToken으로 변경
         if (!token) {
-          console.error("No authentication token found");
+          console.error("No authentication token found.");
           return;
         }
 
-        // Fetch individual assignment grades
-        const assignmentRes = await axios.get("http://localhost:3001/api/grades/assignments", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAssignments(assignmentRes.data);
-
-        // Fetch individual midterm scores
-        const midtermRes = await axios.get("http://localhost:3001/api/grades/midterm", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMidterm(midtermRes.data);
-
-        const finalRes = await axios.get("http://localhost:3001/api/grades/final", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setFinal(finalRes.data);
-
-        // Fetch individual group project scores
-        const gpRes = await axios.get("http://localhost:3001/api/grades/final", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setGps(gpRes.data);
-
-        // Fetch individual attendance scores
-        const attendanceRes = await axios.get("http://localhost:3001api//grades/attendance", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setAttendance(attendanceRes.data);
-
-        // Calculate final score and grade
-        calculateFinalGrade(
-            assignmentRes.data, 
-            midtermRes.data, 
-            finalRes.data, 
-            gpRes.data, 
-            attendanceRes.data);
-
-        // Fetch all users' grades
-        const allGradesRes = await axios.get("http://localhost:3001/api/grades/all", {
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await axios.get("http://localhost:3001/api/user/info", {
+          headers: {
+            Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
+          },
         });
 
-        const { assignments: allAssign, midterm: allMidterm, final: allFinal } = allGradesRes.data;
-        setAllGrades({
-          assignments: allAssign,
-          midterm: allMidterm,
-          final: allFinal,
-        });
-
-        // Calculate standard deviation
-        setAssignmentStdDev(calculateStdDev(allAssign));
-        setTestStdDev(calculateStdDev(allMidterm.concat(allFinal))); // Midterm & Final
+        const userEmail = response.data.email; // 서버에서 받은 email 데이터
+        setEmail(userEmail); // 이메일 상태로 설정
       } catch (error) {
+        console.error("Error fetching user info:", error);
+        alert("Failed to fetch user information.");
+      }
+    };
+
+    fetchUserEmail();
+  }, []);
+
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.error("No access token found");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:3001/api/grades/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = response.data;
+
+        setAssignments([data.assignment1, data.assignment2, data.assignment3, data.assignment4]);
+        setMidterm(data.midterm);
+        setFinal(data.final);
+        setGps(data.group_project);
+        setAttendance(data.attendance);
+
+      
+        // Calculate final score and grade
+        calculateFinalGrade(assignments, midterm, final, gp, attendance);
+
+        const excludedEmail = {email}; // 제외할 이메일
+        const filteredGradesRes = await axios.get(
+          `http://localhost:3001/api/grades/filter-email?email=${excludedEmail}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+  
+        const filteredGrades = filteredGradesRes.data;
+  
+      } catch (error) {
+        alert("Failed to fetch grades.");
         console.error("Error fetching grades:", error);
       }
+
     };
 
     fetchGrades();
   }, []);
 
   const calculateFinalGrade = (assignments, midterm, final, gp, attendance) => {
-    const total = assignments + midterm + final + gp + attendance;
+    const total = assignments + midterm + final + gp + attendance; //assignments 4개로 따로 분리해서 더하기. 이대로 하면 오류 남
     const average = total / 5;
 
     // Assign final score to avg
@@ -107,21 +128,13 @@ const ViewGrade = () => {
       
   };
 
-  const calculateStdDev = (grades) => {
-    if (!grades.length) return 0;
-
-    const mean = grades.reduce((sum, grade) => sum + grade, 0) / grades.length;
-    const variance = grades.reduce((sum, grade) => sum + Math.pow(grade - mean, 2), 0) / grades.length;
-    return Math.sqrt(variance);
-  };
 
   return (
     <div className="view-grade-page">
       <Navbar />
-      <h1>View Grades</h1>
-      <p></p>
+      <div className="charts-only">
       {/* Assignment Scores Card */}
-      <div className="grade-card">
+      <div className="grade-card" style={{ width: '500px', height: '400px' }}>
         <h2>Assignment Scores</h2>
         <Bar
           data={{
@@ -134,11 +147,32 @@ const ViewGrade = () => {
               },
             ],
           }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true, // 범례 표시
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Assignment Standard Deviation",
+              },
+            },
+            scales: {
+              x: {
+                type: "category", // X축을 category로 설정
+              },
+              y: {
+                beginAtZero: true, // Y축 0부터 시작
+              },
+            },
+          }}
         />
       </div>
       <p></p>
       {/* Test Scores Card */}
-      <div className="grade-card">
+      <div className="grade-card" style={{ width: '500px', height: '400px' }}>
         <h2>Test Scores</h2>
         <Bar
           data={{
@@ -151,7 +185,29 @@ const ViewGrade = () => {
               },
             ],
           }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true, // 범례 표시
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Test Standard Deviation",
+              },
+            },
+            scales: {
+              x: {
+                type: "category", // X축을 category로 설정
+              },
+              y: {
+                beginAtZero: true, // Y축 0부터 시작
+              },
+            },
+          }}
         />
+      </div>
       </div>
 
       {/* Final Score and Letter Grade */}
