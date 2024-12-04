@@ -28,7 +28,7 @@ const upload = multer({ dest: "uploads/" });
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'hochan2001!', 
+  password: 'wjswngud!!30', 
   database: 'cse316pj'
 });
 
@@ -272,6 +272,39 @@ app.post('/api/token/refresh', (req, res) => {
       return res.status(200).json({ accessToken: accessToken }); 
   });
 });
+
+//post questions
+app.post('/api/questions', authenticateToken, (req, res) => {
+  const { question } = req.body;
+
+  if (!question) {
+    return res.status(400).json({ error: 'Question is required.' });
+  }
+
+  const query = 'INSERT INTO questions VALUES (?)';
+  db.query(query, [question], (err, result) => {
+    if (err) {
+      console.error('Error inserting question:', err);
+      return res.status(500).json({ error: 'Failed to save question.' });
+    }
+    res.status(200).json({ id: result.insertId, question });
+  });
+});
+
+// get questions
+app.get('/api/questions', authenticateToken, (req, res) => {
+  const query = 'SELECT * FROM questions ORDER BY id';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching questions:', err);
+      return res.status(500).json({ error: 'Failed to fetch questions.' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+
 
 
 function authenticateToken(req, res, next){

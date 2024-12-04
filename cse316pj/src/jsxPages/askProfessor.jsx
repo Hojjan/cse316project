@@ -18,7 +18,7 @@ const AskProfessor = () => {
     // Fetch questions from the server
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/questions');
+        const response = await axios.get('http://localhost:3001/api/questions');
         setQuestionList(response.data);
       } catch (error) {
         console.error('Error fetching questions:', error);
@@ -34,12 +34,13 @@ const AskProfessor = () => {
 
     try {
       // Post a new question to the server
-      const response = await axios.post('http://localhost:3001/questions', {
+      const response = await axios.post('http://localhost:3001/api/questions', {
         question: newQuestion,
       });
 
       //save new question to a question list
       setQuestionList([...questionList, response.data]);
+      alert("Question Uploaded!");
       setNewQuestion(''); //initialize new question
     } catch (error) {
       console.error('Error submitting question:', error);
