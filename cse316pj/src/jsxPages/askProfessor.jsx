@@ -63,6 +63,7 @@ const AskProfessor = () => {
       //save new question to a question list
       setQuestionList([...questionList, response.data]);
       alert(response.data);
+      window.location.reload();
       setNewQuestion(''); //initialize new question
       
     } catch (error) {
