@@ -28,7 +28,7 @@ const upload = multer({ dest: "uploads/" });
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjswngud!!30', 
+  password: 'hochan2001!', 
   database: 'cse316pj'
 });
 
@@ -277,6 +277,24 @@ app.post("/api/user/signin", (req, res) => {
   });
 });
 
+app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
+  const excludedEmail = req.query.email;
+
+  if (!excludedEmail) {
+    return res.status(400).json({ error: "Email to exclude is required." });
+  }
+
+  const query = `SELECT * FROM grades WHERE email_address != ?`;
+
+  db.query(query, [excludedEmail], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Failed to fetch filtered grades." });
+    }
+  
+    res.status(200).json(results); // 필터링된 데이터 반환
+  });
+});
 
 
 

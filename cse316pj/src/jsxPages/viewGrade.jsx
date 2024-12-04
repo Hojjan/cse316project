@@ -29,17 +29,10 @@ const ViewGrade = () => {
   const [final, setFinal] = useState(0);
   const [gp, setGps] = useState(0);
   const [attendance, setAttendance] = useState(0);
-  const [finalScore, setFinalScore] = useState(0);
+  const [filteredGrades, setFilteredGrades] = useState([]);
+  const [finalScores, setFinalScores] = useState([]);
+  const [finalHistogramData, setFinalHistogramData] = useState([]);
   const [letterGrade, setLetterGrade] = useState("N/A");
-  const [assignmentStdDev, setAssignmentStdDev] = useState(0);
-  const [testStdDev, setTestStdDev] = useState(0);
-  const [allGrades, setAllGrades] = useState({
-    assignments: [],
-    midterm: [],
-    final: [],
-    gp: [],
-    attendance: [],
-  });
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -92,7 +85,7 @@ const ViewGrade = () => {
         // Calculate final score and grade
         calculateFinalGrade(assignments, midterm, final, gp, attendance);
 
-        const excludedEmail = {email}; // 제외할 이메일
+        const excludedEmail = email; // 제외할 이메일
         const filteredGradesRes = await axios.get(
           `http://localhost:3001/api/grades/filter-email?email=${excludedEmail}`,
           {
@@ -100,24 +93,39 @@ const ViewGrade = () => {
           }
         );
   
-        const filteredGrades = filteredGradesRes.data;
-  
+        setFilteredGrades(filteredGradesRes.data);
+
+        const scores = filteredGrades.map(row => row[5]); // Assuming 'final' is the 6th column (index 5)
+        setFinalScores(scores);
+        const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
+        scores.forEach(score => {
+          if (score <= 70) {
+            const binIndex = Math.floor(score / 10);
+            histogram[binIndex]++;
+          } else if (score <= 75) {
+            histogram[7]++; // Last bin for scores between 70-75
+          }
+        });
+
+        setFinalHistogramData(histogram);
       } catch (error) {
         alert("Failed to fetch grades.");
         console.error("Error fetching grades:", error);
       }
 
     };
-
-    fetchGrades();
-  }, []);
+    if (email) {
+      fetchGrades();
+    }
+    
+  }, [email]);
 
   const calculateFinalGrade = (assignments, midterm, final, gp, attendance) => {
     const total = assignments + midterm + final + gp + attendance; //assignments 4개로 따로 분리해서 더하기. 이대로 하면 오류 남
     const average = total / 5;
 
     // Assign final score to avg
-    setFinalScore(average);
+    setFinalScores(average);
 
     // Assign letter grade based on average
     if(average >= 90) setLetterGrade('A');
@@ -132,89 +140,86 @@ const ViewGrade = () => {
   return (
     <div className="view-grade-page">
       <Navbar />
-      <div className="charts-only">
-      {/* Assignment Scores Card */}
-      <div className="grade-card" style={{ width: '500px', height: '400px' }}>
-        <h2>Assignment Scores</h2>
-        <Bar
-          data={{
-            labels: ["Standard Deviation"],
-            datasets: [
-              {
-                label: "Assignment Std Dev",
-                data: [assignmentStdDev],
-                backgroundColor: "rgba(75, 192, 192, 0.6)",
+        <div className="charts-only">
+        {/* Assignment Scores Card */}
+        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+          <h2>Assignment Scores</h2>
+          <Bar
+            data={{
+              labels: ["Standard Deviation"],
+              datasets: [
+                {
+                  label: "Assignment Std Dev",
+                  data: [],
+                  backgroundColor: "rgba(75, 192, 192, 0.6)",
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true, // 범례 표시
+                  position: "top",
+                },
+                title: {
+                  display: true,
+                  text: "Assignment Standard Deviation",
+                },
               },
-            ],
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true, // 범례 표시
-                position: "top",
+              scales: {
+                x: {
+                  type: "category", // X축을 category로 설정
+                },
+                y: {
+                  beginAtZero: true, // Y축 0부터 시작
+                },
               },
-              title: {
-                display: true,
-                text: "Assignment Standard Deviation",
+            }}
+          />
+        </div>
+        <p></p>
+        {/* Test Scores Card */}
+        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+          <h2>Final Exam</h2>
+          <Bar
+            data={{
+              labels: ["0-10", "10-20", "20-30", "30-40", "40-50", "50-60", "60-70", "70-75"],
+              datasets: [
+                {
+                  label: "Number of Students",
+                  data: finalHistogramData,
+                  backgroundColor: "rgba(153, 102, 255, 0.6)",
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true, // 범례 표시
+                  position: "top",
+                },
+                title: {
+                  display: true,
+                  text: "Final Test Scores Distribution",
+                },
               },
-            },
-            scales: {
-              x: {
-                type: "category", // X축을 category로 설정
+              scales: {
+                x: {
+                  type: "category", // X축을 category로 설정
+                },
+                y: {
+                  beginAtZero: true, // Y축 0부터 시작
+                  title: {
+                    display: true,
+                    text: "Number of Students",
+                  },
+                },
               },
-              y: {
-                beginAtZero: true, // Y축 0부터 시작
-              },
-            },
-          }}
-        />
-      </div>
-      <p></p>
-      {/* Test Scores Card */}
-      <div className="grade-card" style={{ width: '500px', height: '400px' }}>
-        <h2>Test Scores</h2>
-        <Bar
-          data={{
-            labels: ["Standard Deviation"],
-            datasets: [
-              {
-                label: "Test Std Dev",
-                data: [testStdDev],
-                backgroundColor: "rgba(153, 102, 255, 0.6)",
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true, // 범례 표시
-                position: "top",
-              },
-              title: {
-                display: true,
-                text: "Test Standard Deviation",
-              },
-            },
-            scales: {
-              x: {
-                type: "category", // X축을 category로 설정
-              },
-              y: {
-                beginAtZero: true, // Y축 0부터 시작
-              },
-            },
-          }}
-        />
-      </div>
-      </div>
-
-      {/* Final Score and Letter Grade */}
-      <p></p>
-      <div className="final-grade">
-        <h3>Final Score: {finalScore}</h3>
-        <h3>Letter Grade: {letterGrade}</h3>
+            }}
+          />
+        </div>
       </div>
     </div>
   );
