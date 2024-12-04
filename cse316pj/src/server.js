@@ -170,17 +170,16 @@ app.get("/api/user/info", authenticateToken, (req, res) => {
   });
 });
 
-app.get('/api/grades/all', authenticateToken, (req, res) => {
-  const userId = req.user.id; // Access userId from the authenticated token
+//View Grades//////////////////////////////////////////////////////////////////////
+
+app.post('/api/grades/all', authenticateToken, (req, res) => {
+  const { email } = req.body; // Access userId from the authenticated token
 
   const query = `
-    SELECT 
-      assignment1, assignment2, assignment3, assignment4, 
-      midterm, final, group_project, attendance 
-    FROM grades 
-    WHERE user_id = ?`;
+    SELECT assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance 
+    FROM grades WHERE email_address = ?`;
 
-  db.query(query, [userId], (err, results) => {
+  db.query(query, [email], (err, results) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).json({ error: "Failed to fetch grades." });
@@ -189,32 +188,32 @@ app.get('/api/grades/all', authenticateToken, (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ error: "No grades found for the user." });
     }
-
+    console.log(results[0])
     res.status(200).json(results[0]); // Return the grades for the user
   });
 });
 
-app.get('/api/grades/alluser', authenticateToken, (req, res) => {
-  const query = `
-    SELECT 
-      user_id, assignment1, assignment2, assignment3, assignment4, 
-      midterm, final, group_project, attendance 
-    FROM grades`;
 
-  db.query(query, (err, results) => {
+app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
+  const excludedEmail = req.query.email;
+
+  if (!excludedEmail) {
+    return res.status(400).json({ error: "Email to exclude is required." });
+  }
+
+  const query = `SELECT * FROM grades WHERE email_address != ?`;
+
+  db.query(query, [excludedEmail], (err, results) => {
     if (err) {
       console.error("Database error:", err);
-      return res.status(500).json({ error: "Failed to fetch all users' grades." });
+      return res.status(500).json({ error: "Failed to fetch filtered grades." });
     }
-
-    if (results.length === 0) {
-      return res.status(404).json({ error: "No grades found." });
-    }
-
-    res.status(200).json(results); // Return all grades
+  
+    res.status(200).json(results); // 필터링된 데이터 반환
   });
 });
 
+//////////////////////////////////////////////////////////////////////////////////
 
 app.post("/api/user/signup", (req, res) => {
   console.log("Request body: ", req.body);
@@ -277,24 +276,6 @@ app.post("/api/user/signin", (req, res) => {
   });
 });
 
-app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
-  const excludedEmail = req.query.email;
-
-  if (!excludedEmail) {
-    return res.status(400).json({ error: "Email to exclude is required." });
-  }
-
-  const query = `SELECT * FROM grades WHERE email_address != ?`;
-
-  db.query(query, [excludedEmail], (err, results) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Failed to fetch filtered grades." });
-    }
-  
-    res.status(200).json(results); // 필터링된 데이터 반환
-  });
-});
 
 
 
