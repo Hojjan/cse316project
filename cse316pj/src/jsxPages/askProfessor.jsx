@@ -6,6 +6,7 @@ import axios from 'axios';
 const AskProfessor = () => {
   const [questionList, setQuestionList] = useState([]);
   const [newQuestion, setNewQuestion] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const professorInfo = {
     name: 'Professor John Doe',
     email: 'johndoe@example.com',
@@ -34,7 +35,28 @@ const AskProfessor = () => {
       }
     };
 
+    //fetch user email
+    const FetchUserEmail = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if(!token){
+          console.error('No authentication token found');
+          return;
+        }
+        const response = await axios.get('http://localhost:3001/api/user/email', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("user email: ", response.data.email);
+        setUserEmail(response.data.email);
+      } catch (error) {
+        console.error('Error fetching user email: ', error);
+      }
+    };
+
     fetchQuestions();
+    FetchUserEmail();
   }, []);
 
   //Delete questions function
@@ -175,12 +197,14 @@ const AskProfessor = () => {
             {questionList.map((question) => (
               <li key={question.id}>
                 {question.question_text}
-                <button
-                  className="btn btn-outline-danger"
-                  onClick={() => deleteQuestions(question.id)}
-                >
-                  Delete
-                </button>
+                {userEmail && question.user_email === userEmail && (
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={() => deleteQuestions(question.id)}
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>)
