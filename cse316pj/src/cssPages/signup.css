@@ -60,6 +60,25 @@
     border-radius: 5px;
 }
 
+.agreement-section{
+    display: flex;
+    flex-direction: column;
+}
+
+.form-check{
+    padding: 0;
+}
+
+#agree{
+    margin-top: 5px;
+}
+
+.form-check input{
+    width: 20px;
+    height: 20px;
+    padding: 0;
+}
+
 @media(max-width: 550px){
     .passwordCheck-container, .username-container, .email-container, .password-container{
         display: flex;
