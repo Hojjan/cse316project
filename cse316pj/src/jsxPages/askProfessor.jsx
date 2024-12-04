@@ -54,9 +54,10 @@ const AskProfessor = () => {
         console.error('Error fetching user email: ', error);
       }
     };
-
-    fetchQuestions();
+    
     FetchUserEmail();
+    fetchQuestions();
+    
   }, []);
 
   //Delete questions function

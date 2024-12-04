@@ -317,23 +317,44 @@ app.post('/api/token/refresh', (req, res) => {
 
 //post questions
 app.post('/api/questions', (req, res) => {
-  const { question } = req.body;
-  const userEmail = req.user.email;
-  console.log(question);
-  if (!question) {
-    return res.status(400).json({ error: 'Question is required.' });
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    console.error('Access token is missing.');
+    return res.status(401).json({ error: 'Access token is missing.' });
   }
 
-  const query = 'INSERT INTO questions (question_text, user_email) VALUES (?, ?)';
+  try {
+    const decoded = jwt.decode(token);
+    const userEmail = decoded?.email;
 
-  db.query(query, [question, userEmail], (err, result) => {
-    if (err) {
-      console.error('Error inserting question:', err);
-      return res.status(500).json({ error: 'Failed to save question.' });
+    if (!userEmail) {
+      console.error('User email is missing from token.');
+      return res.status(400).json({ error: 'User email is missing from token.' });
     }
-    res.status(200).send("question successfully uploaded!");
-  });
+
+    const { question } = req.body;
+    if (!question) {
+      console.error('Question is required but not provided.');
+      return res.status(400).json({ error: 'Question is required.' });
+    }
+
+    const query = 'INSERT INTO questions (question_text, user_email) VALUES (?, ?)';
+    db.query(query, [question, userEmail], (err, result) => {
+      if (err) {
+        console.error('Error inserting question into database:', err);
+        return res.status(500).json({ error: 'Failed to save question.' });
+      }
+      console.log('Question successfully saved:', result);
+      res.status(200).send('Question successfully uploaded!');
+    });
+  } catch (err) {
+    console.error('Error decoding token:', err);
+    res.status(403).json({ error: 'Invalid token.' });
+  }
 });
+
 
 // get questions
 app.get('/api/questions', (req, res) => {
@@ -363,6 +384,7 @@ app.delete('/api/questions/:id', (req, res) => {
   });
 })
 
+//get email from user
 app.get('/api/user/email', (req, res) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -403,9 +425,11 @@ function genRefTok(user){
   return jwt.sign({ id: user.id, email: user.email }, process.env.REFRESH_TOKEN_SECRET);
 }
 
+
 function extractEmailFromToken(token) {
   try {
     const decoded = jwt.decode(token);
+    console.log("Decoded token:", decoded); 
     if (!decoded || !decoded.email) {
       throw new Error("Invalid token: email not found");
     }
