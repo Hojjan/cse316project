@@ -24,7 +24,7 @@ ChartJS.register(
 
 const ViewGrade = () => {
   const [email, setEmail] = useState("");
-  const [assignments, setAssignments] = useState();
+  const [assignments, setAssignments] = useState([]);
   const [midterm, setMidterm] = useState(0);
   const [final, setFinal] = useState(0);
   const [gp, setGps] = useState(0);
@@ -34,7 +34,7 @@ const ViewGrade = () => {
   const [finalHistogramData, setFinalHistogramData] = useState([]);
   const [letterGrade, setLetterGrade] = useState("N/A");
 
-  useEffect(() => {
+  useEffect(() => { //user email 불러오기
     const fetchUserEmail = async () => {
       try {
         const token = localStorage.getItem("accessToken"); // 토큰 이름을 accessToken으로 변경
@@ -60,7 +60,7 @@ const ViewGrade = () => {
     fetchUserEmail();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { //불러온 이메일로 user의 성적 불러오기
     const fetchGrades = async () => {
       try {
         const token = localStorage.getItem("accessToken");
@@ -69,30 +69,40 @@ const ViewGrade = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:3001/api/grades/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.post("http://localhost:3001/api/grades/all",
+          { email }, // 요청 본문에 email 추가
+          {
+            headers: { Authorization: `Bearer ${token}` }, // 인증 토큰 포함
+          }
+        );
 
         const data = response.data;
 
-        setAssignments([data.assignment1, data.assignment2, data.assignment3, data.assignment4]);
+        const assignmentGrades = [data.assignment1, data.assignment2, data.assignment3, data.assignment4];
+        setAssignments(assignmentGrades);
         setMidterm(data.midterm);
         setFinal(data.final);
         setGps(data.group_project);
         setAttendance(data.attendance);
+        console.log("Assss: ", assignments);
 
       
-        // Calculate final score and grade
-        calculateFinalGrade(assignments, midterm, final, gp, attendance);
+        if (assignments.every((grade) => grade !== undefined)) {
+          calculateFinalGrade(assignments, midterm, final, gp, attendance);
+        } else {
+          console.warn("Incomplete assignment grades:", assignmentGrades);
+        }
+    
 
         const excludedEmail = email; // 제외할 이메일
-        const filteredGradesRes = await axios.get(
+        //console.log(email);
+        const filteredGradesRes = await axios.get( //user의 이메일을 제외하고 나머지 학생들의 성적 불러오기
           `http://localhost:3001/api/grades/filter-email?email=${excludedEmail}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-  
+        console.log("sdfsdfsdfsdf", filteredGradesRes.data);
         setFilteredGrades(filteredGradesRes.data);
 
         const scores = filteredGrades.map(row => row[5]); // Assuming 'final' is the 6th column (index 5)
@@ -121,7 +131,12 @@ const ViewGrade = () => {
   }, [email]);
 
   const calculateFinalGrade = (assignments, midterm, final, gp, attendance) => {
-    const total = assignments + midterm + final + gp + attendance; //assignments 4개로 따로 분리해서 더하기. 이대로 하면 오류 남
+    if (!assignments || assignments.length < 4) {
+      console.error("Assignments array is incomplete:", assignments);
+      return;
+    }
+
+    const total = assignments[0] + assignments[1] + assignments[2] + assignments[3] + midterm + final + gp + attendance; //assignments 4개로 따로 분리해서 더하기
     const average = total / 5;
 
     // Assign final score to avg
