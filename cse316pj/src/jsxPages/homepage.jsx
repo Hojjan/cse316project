@@ -115,16 +115,16 @@ function Home(){
       <div className="homeWholeText">
         <div className="siteDesc">
           <p className="subtitle"><strong>Guess Grade:</strong></p> 
-          <p>A web site for viewing grades of classmates, and calculating my temporary grades!</p>
+          <p className="detailed-text">A web site for viewing grades of classmates, and calculating my temporary grades!</p>
         </div>
         <div>
           <p className="subtitle"><strong>About the course:</strong></p>
-            <li>
+            <li className="detailed-text">
               An introduction to systematic design, development and testing of software
-              <p>systems, including even-driven and Web programming, information</p>
-              <p>management, software design and development fundamentals.</p>
+              <p className="detailed-text">systems, including even-driven and Web programming, information</p>
+              <p className="detailed-text">management, software design and development fundamentals.</p>
             </li>
-            <li>
+            <li className="detailed-text">
               The application of these sills to the construction of large robust programs.
             </li>
         </div>

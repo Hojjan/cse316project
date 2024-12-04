@@ -11,6 +11,15 @@ function InsertGrade(){
   const [attendance, setAttendance] = useState('');
   const [email, setEmail] = useState("");
 
+  const maxValues = {
+    assignments: [50, 50, 50, 75], // 각 assignment의 최대값
+    midterm: 50,
+    final: 75,
+    groupProject: 125,
+    attendance: 25,
+  };
+
+
   useEffect(() => {
     const fetchUserEmail = async () => {
       try {
@@ -37,10 +46,14 @@ function InsertGrade(){
     fetchUserEmail();
   }, []);
 
+  const validateInput = (value, maxValue) => {
+    const numericValue = parseFloat(value || 0);
+    return numericValue > maxValue ? maxValue : value;
+  };
 
   const handleAssignmentChange = (index, value) => {
     const updatedAssignments = [...assignments];
-    updatedAssignments[index] = value; // 특정 인덱스의 값을 업데이트
+    updatedAssignments[index] = validateInput(value, maxValues.assignments[index]);
     setAssignments(updatedAssignments);
   };
   const navigate = useNavigate();
@@ -96,7 +109,7 @@ function InsertGrade(){
                   value={assignment}
                   onChange={(e) => handleAssignmentChange(index, e.target.value)}
                 />
-                <p><strong>{index === 3 ? '/ 75' : '/ 50'}</strong></p>
+                <p><strong>{`/ ${maxValues.assignments[index]}`}</strong></p>
               </div>
             </div>
           ))}
@@ -111,7 +124,7 @@ function InsertGrade(){
           <div className='testContainer'>
             <p>Midterm:</p>
             <div className='testInput'>
-              <input type="text" className="testGrd" value={midterm} onChange={(e) => setMidterm(e.target.value)}/> 
+              <input type="text" className="testGrd" value={midterm} onChange={(e) => setMidterm(validateInput(e.target.value, maxValues.midterm))}/> 
               <p><strong>/ 50</strong></p>
             </div>
           </div>
@@ -119,7 +132,7 @@ function InsertGrade(){
           <div className='finalTestContainer'>
             <p>Final:</p>
             <div className='testInput'>
-              <input type="text" className="testGrd" value={final} onChange={(e) => setFinal(e.target.value)}/> 
+              <input type="text" className="testGrd" value={final} onChange={(e) => setFinal(validateInput(e.target.value, maxValues.final))}/> 
               <p><strong>/ 75</strong></p>
             </div>
           </div>
@@ -127,7 +140,7 @@ function InsertGrade(){
           <div className='gpContainer'>
             <p>Group Project:</p>
               <div className='testInput'>
-                <input type="text" className="testGrd" value={groupProject} onChange={(e) => setGroupProject(e.target.value)}/> 
+                <input type="text" className="testGrd" value={groupProject} onChange={(e) => setGroupProject(validateInput(e.target.value, maxValues.groupProject))}/> 
                 <p><strong>/ 125</strong></p>
               </div>
           </div>
@@ -142,7 +155,7 @@ function InsertGrade(){
           <div className='attdContainer'>
             <p>Attendance:</p>
               <div className='testInput'>
-                <input type="text" className="testGrd" value={attendance} onChange={(e) => setAttendance(e.target.value)}/>
+                <input type="text" className="testGrd" value={attendance} onChange={(e) => setAttendance(validateInput(e.target.value, maxValues.attendance))}/>
                 <p><strong>/ 25</strong></p>
               </div>
           </div>

@@ -29,18 +29,18 @@ const ViewGrade = () => {
   const [final, setFinal] = useState(0);
   const [gp, setGps] = useState(0);
   const [attendance, setAttendance] = useState(0);
-  const [filteredGrades, setFilteredGrades] = useState([]);
   const [finalHistogramData, setFinalHistogramData] = useState([]);
   const [midtermHistogramData, setMidtermHistogramData] = useState([]);
   const [gpHistogramData, setGpHistogramData] = useState([]);
   const [assignmentsHistogramData, setAssignmentsHistogramData] = useState([]);
   const [letterGrade, setLetterGrade] = useState("N/A");
+  const [finalScoreIn100, setFinalScoreIn100] = useState(0);
   const [finalScores, setFinalScores] = useState(0);
 
   useEffect(() => { //user email 불러오기
     const fetchUserEmail = async () => {
       try {
-        const token = localStorage.getItem("accessToken"); // 토큰 이름을 accessToken으로 변경
+        const token = await getAccessToken();
         if (!token) {
           console.error("No authentication token found.");
           return;
@@ -61,12 +61,12 @@ const ViewGrade = () => {
     };
 
     fetchUserEmail();
-  }, []);
+  });
 
   useEffect(() => { //불러온 이메일로 user의 성적 불러오기
     const fetchGrades = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
+        const token = await getAccessToken();
         if (!token) {
           console.error("No access token found");
           return;
@@ -84,7 +84,7 @@ const ViewGrade = () => {
         const assignmentGrades = [data.assignment1, data.assignment2, data.assignment3, data.assignment4];
         console.log("Assignment Grades: ", assignmentGrades);
 
-        setAssignments(assignmentGrades);
+        setAssignments(assignmentGrades); //assignments 변수에 배열 할당
         setMidterm(data.midterm); 
         setFinal(data.final);
         setGps(data.group_project);
@@ -107,15 +107,13 @@ const ViewGrade = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setFilteredGrades(filteredGradesRes.data);
-        const assignmentKeys = ['assignment1', 'assignment2', 'assignment3', 'assignment4'];
         calculateFinalHistogram(filteredGradesRes.data, 'final', setFinalHistogramData);
         calculateMtHistogram(filteredGradesRes.data, 'midterm', setMidtermHistogramData);
         calculateGpHistogram(filteredGradesRes.data, 'group_project', setGpHistogramData);
-        calculateAsmtHistogram(filteredGradesRes.data, assignmentKeys, setAssignmentsHistogramData);
+        calculateAsmtHistogram(filteredGradesRes.data, 'assignment1','assignment2',
+                                'assignment3','assignment4', setAssignmentsHistogramData);
         
       } catch (error) {
-        alert("asdoifjasodifjasodifjasodifj"); //요놈이다
         console.error("Error fetching grades:", error);
       }
 
@@ -210,9 +208,16 @@ const ViewGrade = () => {
     });
     setHistogram(histogram);
   };
-  const calculateAsmtHistogram = (data, keys, setHistogram) => {
-    const totalScores = data.map(row =>
-      keys.reduce((sum, key) => sum + parseFloat(row[key] || 0), 0) // 문자열을 숫자로 변환 후 더하기
+  const calculateAsmtHistogram = (data, key1, key2, key3, key4, setHistogram) => {
+    const scores1 = data.map(row => row[key1]); //모든 사용자의 ass1
+    const scores2 = data.map(row => row[key2]); //모든 사용자의 ass2
+    const scores3 = data.map(row => row[key3]);
+    const scores4 = data.map(row => row[key4]);
+    const totalScores = scores1.map((_, index) => 
+      (parseFloat(scores1[index] || 0) + 
+       parseFloat(scores2[index] || 0) + 
+       parseFloat(scores3[index] || 0) + 
+       parseFloat(scores4[index] || 0))
     );
     console.log("total asmt scores: ", totalScores);
     
@@ -239,19 +244,42 @@ const ViewGrade = () => {
       console.error("Assignments array is incomplete:", assignments);
       return;
     }
+    console.log("assignments", assignments); 
 
-    const total = assignments[0] + assignments[1] + assignments[2] + assignments[3] + midterm + final + gp + attendance; //assignments 4개로 따로 분리해서 더하기
-    const average = total / 5;
+    const totalAsmt = assignments.reduce((sums, score) => {
+      const parsedScore = parseFloat(score);
+      if (isNaN(parsedScore)) {
+        console.warn(`Invalid number detected: "${score}"`);
+        return sums; // 무시
+      }
+      return sums + parsedScore;
+    }, 0);
 
-    // Assign final score to avg
-    setFinalScores(average);
+    const parsedMidterm = parseFloat(midterm);
+    const parsedFinal = parseFloat(final);
+    const parsedGp = parseFloat(gp);
+    const parsedAt = parseFloat(attendance);
 
-    // Assign letter grade based on average
-    if(average >= 90) setLetterGrade('A');
-    else if (average >= 80) setLetterGrade('B');
-    else if (average >= 70) setLetterGrade('C');
-    else if (average >= 60) setLetterGrade('D');
-    else setLetterGrade('F');
+    
+    const total = totalAsmt + parsedMidterm + parsedFinal + parsedGp - (parsedAt * 0.25);
+    
+    const finalScore = total;
+    setFinalScores(finalScore);
+
+    const finalScorePercentage = finalScore / 500 * 100;
+    setFinalScoreIn100(finalScorePercentage);
+
+
+    if(finalScore >= 465) setLetterGrade('A');
+    else if (finalScore >= 450) setLetterGrade('A-');
+    else if (finalScore >= 435) setLetterGrade('B+');
+    else if (finalScore >= 415) setLetterGrade('B');
+    else if (finalScore >= 400) setLetterGrade('B-');
+    else if (finalScore >= 385) setLetterGrade('C+');
+    else if (finalScore >= 365) setLetterGrade('C');
+    else if (finalScore >= 350) setLetterGrade('C-');
+    else if (finalScore >= 335) setLetterGrade('D+');
+    else setLetterGrade('D');
       
   };
 
@@ -262,7 +290,7 @@ const ViewGrade = () => {
         <div className="charts-only">
 
         {/* Final Exam Histogram */}
-        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+        <div className="grade-card" style={{ width: '450px', height: '350px' }}>
           <h2>Final Exam</h2>
           <Bar
             data={{
@@ -281,7 +309,7 @@ const ViewGrade = () => {
 
 
         {/* Midterm Histogram */}
-        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+        <div className="grade-card" style={{ width: '450px', height: '350px' }}>
           <h2>Midterm Exam</h2>
           <Bar
             data={{
@@ -298,7 +326,7 @@ const ViewGrade = () => {
         </div>
 
         {/* Group Project Histogram */}
-        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+        <div className="grade-card" style={{ width: '450px', height: '350px' }}>
           <h2>Group Project</h2>
           <Bar
             data={{
@@ -315,7 +343,7 @@ const ViewGrade = () => {
         </div>
 
         {/* Assignment Histogram */}
-        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+        <div className="grade-card" style={{ width: '450px', height: '350px' }}>
           <h2>Assignments</h2>
           <Bar
             data={{
@@ -332,6 +360,20 @@ const ViewGrade = () => {
 
         </div>
 
+
+       {/* Anticipated Grade Section */}
+       <div className="grade-summary">
+          <h2>Your Grade Summary</h2>
+          <p>
+            <strong>Anticipated Letter Grade:</strong> {letterGrade}
+          </p>
+          <p>
+            <strong>Final Score:</strong> {finalScores.toFixed(2)}
+          </p>
+          <p>
+            <strong>Final Score in Percentage:</strong> {finalScoreIn100.toFixed(2)}%
+          </p>
+        </div>
 
       </div>
     </div>

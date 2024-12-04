@@ -9,6 +9,9 @@
     gap: 10px; /* 각 column 간격 */
     justify-items: center; /* 각 아이템을 중앙 정렬 */
     align-items: start; /* 아이템을 상단 정렬 */
+    max-width: 1200px; /* grid의 최대 너비를 제한 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 0 20px; /* 양쪽에 약간의 여백 추가 */
 }
 
 .grade-card{
@@ -19,5 +22,17 @@
     border-radius: 10px; /* 둥근 모서리 */
     background-color: #f9f9f9; /* 카드 배경 색상 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 효과 */
+    margin-bottom: 20px;
 }
 
+.grade-summary{
+    border: 5px solid #0073c5; /* 선택적으로 카드에 경계 추가 */
+    border-radius: 10px;
+    padding: 20px 60px;
+}
+
+@media (max-width: 900px) {
+    .charts-only {
+        grid-template-columns: 1fr; /* 한 개의 column */
+    }
+}
