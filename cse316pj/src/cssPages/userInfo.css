@@ -138,9 +138,10 @@ input {
     color: white;
 }
 
-#uploadBtn{
+.uploadBtn{
     width: 100px;
     height: 34px;
+    border-radius: 10px;
 }
 
 .overlay {

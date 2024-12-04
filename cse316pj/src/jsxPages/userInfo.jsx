@@ -361,7 +361,7 @@ function Userinfo(){
                                 <>
                                     <div className="popup-content">
                                         {popContent}
-                                        <button id="uploadBtn" onClick={handleImageUpload}>Upload Image</button>
+                                        <button className="uploadBtn" onClick={handleImageUpload}>Upload Image</button>
                                     </div>
                                     <div className="popUpButtons">
                                         <button id="closeBtn" onClick={closePopup}>Close</button>
