@@ -51,16 +51,9 @@ function Navbar(){
               <Link to="/askProfessor" onClick={() => handleMenuClick('/askProfessor')}><p>Ask Professor</p></Link>
             </li>
             <li className="hideOnMobile">
-              <Link to="#" className="user">
-                <p>User</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368">
-                    <path d="M480-360 280-560h400L480-360Z" />
-                  </svg>
+            <Link to="/userInfo" className="user" onClick={() => handleMenuClick('/userInfo')}>
+                <p>User Info</p>
               </Link>
-              <ul className="dropdown-content">
-                <Link to="/userInfo" onClick={() => handleMenuClick('/userInfo')}>My Information</Link>
-                <Link to="/reservationHistory" onClick={() => handleMenuClick('/reservationHistory')}>Reservation History</Link>
-              </ul>
             </li>
           </div>
 
@@ -92,10 +85,7 @@ function Navbar(){
             <Link to="/reservation" onClick={() => handleMenuClick('/reservation')}>Facility Reservation</Link>
           </li>
           <li>
-            <Link to="/userInfo" onClick={() => handleMenuClick('/userInfo')}>
-              User Information
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-360 280-560h400L480-360Z" /></svg>
-            </Link>
+            <Link to="/userInfo" onClick={() => handleMenuClick('/userInfo')}>User Information</Link>
           </li>
         </ul>
     </nav>
