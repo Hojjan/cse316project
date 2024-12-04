@@ -165,7 +165,6 @@ app.get("/api/user/info", authenticateToken, (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    console.log(results[0]);
     const userInfo = results[0]; // Extract user info
     return res.status(200).json(userInfo);
   });
@@ -276,18 +275,19 @@ app.post('/api/token/refresh', (req, res) => {
 //post questions
 app.post('/api/questions', authenticateToken, (req, res) => {
   const { question } = req.body;
-
+  console.log(question);
   if (!question) {
     return res.status(400).json({ error: 'Question is required.' });
   }
 
-  const query = 'INSERT INTO questions VALUES (?)';
+  const query = 'INSERT INTO questions (question_text) VALUES (?)';
+
   db.query(query, [question], (err, result) => {
     if (err) {
       console.error('Error inserting question:', err);
       return res.status(500).json({ error: 'Failed to save question.' });
     }
-    res.status(200).json({ id: result.insertId, question });
+    res.status(200).send("question successfully uploaded!");
   });
 });
 
@@ -300,6 +300,7 @@ app.get('/api/questions', authenticateToken, (req, res) => {
       console.error('Error fetching questions:', err);
       return res.status(500).json({ error: 'Failed to fetch questions.' });
     }
+    console.log(results);
     res.status(200).json(results);
   });
 });

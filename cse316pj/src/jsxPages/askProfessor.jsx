@@ -18,8 +18,13 @@ const AskProfessor = () => {
     // Fetch questions from the server
     const fetchQuestions = async () => {
       try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.error("No authentication token found");
+          return;
+        }
         const response = await axios.get('http://localhost:3001/api/questions');
-        setQuestionList(response.data);
+        setQuestionList([...questionList, response.data]);
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
@@ -30,20 +35,50 @@ const AskProfessor = () => {
 
 
   const questionSubmission = async () => {
-    if (newQuestion.trim() === '') return; // empty list check
+    if (newQuestion.trim() === '') {
+      alert("Question empty");
+      return; // empty list check
+    }
 
     try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('No authentication token found');
+        return;
+      }
       // Post a new question to the server
       const response = await axios.post('http://localhost:3001/api/questions', {
         question: newQuestion,
       });
 
       //save new question to a question list
-      setQuestionList([...questionList, response.data]);
-      alert("Question Uploaded!");
+      alert(response.data);
       setNewQuestion(''); //initialize new question
     } catch (error) {
       console.error('Error submitting question:', error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            alert('Session expired. Please sign in again.');
+            return;
+          }
+  
+          const refreshResponse = await axios.post('http://localhost:3001/api/token/refresh', {
+            token: refreshToken,
+          });
+  
+          const newAccessToken = refreshResponse.data.accessToken;
+          localStorage.setItem('authToken', newAccessToken); 
+  
+          await questionSubmission();
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          alert('Session expired. Please sign in again.');
+        }
+      } else {
+        alert('An error occurred while submitting your question.');
+      }
     }
   };
 
