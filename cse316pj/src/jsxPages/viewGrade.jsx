@@ -111,10 +111,10 @@ const ViewGrade = () => {
           console.log(`Row ${index}:`, row);
         });
 
-        const scores = filteredGradesRes.data.map(row => row.final); // Assuming 'final' is the 6th column (index 5)
-        console.log("scores: ", scores);///////////////////////////////////
-        
+        const scores = filteredGradesRes.data.map(row => row.final);
         setFinalScores(scores);
+
+        
         const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
         scores.forEach(score => {
           if (score <= 70) {

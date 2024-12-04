@@ -219,7 +219,7 @@ app.post("/api/user/signup", (req, res) => {
   console.log("Request body: ", req.body);
 
   const {email, password, username, year } = req.body;
-  const checkEmailQuery = "SELECT * FROM user WHERE email_address = ?";
+  const checkEmailQuery = "SELECT * FROM cse316pj.user WHERE email_address = ?";
 
   
   db.query(checkEmailQuery, [email], (err, results) => {
@@ -232,7 +232,7 @@ app.post("/api/user/signup", (req, res) => {
     }
 
 
-    const insertUserQuery = "INSERT INTO user (email_address, password, username, year) VALUES (?, ?, ?, ?)";
+    const insertUserQuery = "INSERT INTO cse316pj.user (email_address, password, username, year) VALUES (?, ?, ?, ?)";
     db.query(insertUserQuery, [email, password, username, year], (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Database error during user insertion.", err });
