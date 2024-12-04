@@ -18,7 +18,7 @@ function Home(){
       setIsAuthenticated(true);
       fetchUserInfo();
     }
-  }, []);
+  });
 
   const fetchUserInfo = async () => {
     try {
@@ -30,12 +30,41 @@ function Home(){
       });
       setUserInfo(response.data); // 사용자 정보 저장
     } catch (error) {
-      console.error(error);
-      alert("Failed to fetch user information. Please sign in again.");
-      setIsAuthenticated(false);
+      if (error.response && error.response.status === 403) {
+        console.log("Access token expired. Trying to refresh token...");
+        // Access Token 만료 시 Refresh Token을 사용하여 재발급
+        await handleRefreshToken();
+      } else {
+        console.error("Failed to fetch user information:", error);
+        alert("Failed to fetch user information. Please sign in again.");
+        setIsAuthenticated(false);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      }
     }
   };
 
+  const handleRefreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) {
+        throw new Error("Refresh token not found");
+      }
+      const response = await axios.post('http://localhost:3001/api/token/refresh', { token: refreshToken });
+      const { accessToken } = response.data;
+
+      // 새로운 Access Token 저장
+      localStorage.setItem("accessToken", accessToken);
+      console.log("Access token refreshed. Fetching user info...");
+      await fetchUserInfo(); // 재발급 후 사용자 정보 재요청
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      alert("Session expired. Please sign in again.");
+      setIsAuthenticated(false);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+  };
   const handleSignin = () => {
     if (!email) {
         alert("Please enter your email.");
