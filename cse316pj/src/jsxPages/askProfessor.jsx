@@ -6,7 +6,6 @@ import axios from 'axios';
 const AskProfessor = () => {
   const [questionList, setQuestionList] = useState([]);
   const [newQuestion, setNewQuestion] = useState('');
-  const [userEmail, setUserEmail] = useState('');
   const professorInfo = {
     name: 'Professor John Doe',
     email: 'johndoe@example.com',
@@ -19,7 +18,7 @@ const AskProfessor = () => {
     // Fetch questions from the server
     const fetchQuestions = async () => {
       try {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
           console.error("No authentication token found");
           return;
@@ -31,33 +30,38 @@ const AskProfessor = () => {
         });        
         setQuestionList(response.data);
       } catch (error) {
+        if (error.response && error.response.status === 403) {
+          console.log("Access token expired. Refreshing token...");
+          await handleRefreshToken();
+          return fetchQuestions();
+        }
         console.error('Error fetching questions:', error);
       }
     };
-
-    //fetch user email
-    const FetchUserEmail = async () => {
+    const handleRefreshToken = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        if(!token){
-          console.error('No authentication token found');
-          return;
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+          throw new Error("Refresh token not found");
         }
-        const response = await axios.get('http://localhost:3001/api/user/email', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    
+        const response = await axios.post('http://localhost:3001/api/token/refresh', {
+          token: refreshToken,
         });
-        console.log("user email: ", response.data.email);
-        setUserEmail(response.data.email);
+    
+        const newAccessToken = response.data.accessToken;
+        localStorage.setItem("accessToken", newAccessToken);
+        console.log("Access token refreshed.");
       } catch (error) {
-        console.error('Error fetching user email: ', error);
+        console.error("Failed to refresh token:", error);
+        alert("Session expired. Please sign in again.");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = '/homepage';
       }
     };
-    
-    FetchUserEmail();
+
     fetchQuestions();
-    
   }, []);
 
   //Delete questions function
@@ -75,6 +79,7 @@ const AskProfessor = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      //filter removed question from the list 
       setQuestionList((prevQuestionList) => 
         prevQuestionList.filter((question) => question.id !== qid
       ));
@@ -108,6 +113,7 @@ const AskProfessor = () => {
       }
     }
   };
+  //question submission function
   const questionSubmission = async () => {
     if (newQuestion.trim() === '') {
       alert("Question empty");
@@ -131,7 +137,13 @@ const AskProfessor = () => {
       );
 
       //save new question to a question list
-      setQuestionList([...questionList, response.data]);
+      setQuestionList((prev) => [...prev,
+        {
+          id: response.data.questionId,
+          question_text: response.data.questionText,
+          user_email: response.data.userEmail,
+        },
+      ]);
       alert(response.data);
       window.location.reload();
       setNewQuestion(''); //initialize new question
@@ -198,14 +210,12 @@ const AskProfessor = () => {
             {questionList.map((question) => (
               <li key={question.id}>
                 {question.question_text}
-                {userEmail && question.user_email === userEmail && (
-                  <button
-                    className="btn btn-outline-danger"
-                    onClick={() => deleteQuestions(question.id)}
-                  >
-                    Delete
-                  </button>
-                )}
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => deleteQuestions(question.id)}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>)
