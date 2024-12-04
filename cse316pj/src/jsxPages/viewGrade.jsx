@@ -79,20 +79,22 @@ const ViewGrade = () => {
         const data = response.data;
 
         const assignmentGrades = [data.assignment1, data.assignment2, data.assignment3, data.assignment4];
+        console.log("Assignment Grades: ", assignmentGrades);
+
         setAssignments(assignmentGrades);
-        setMidterm(data.midterm);
+        setMidterm(data.midterm); 
         setFinal(data.final);
         setGps(data.group_project);
-        setAttendance(data.attendance);
-        console.log("Assss: ", assignments);
+        setAttendance(data.attendance); //user의 모든 성적을 받음
 
       
-        if (assignments.every((grade) => grade !== undefined)) {
-          calculateFinalGrade(assignments, midterm, final, gp, attendance);
+        if (assignmentGrades.every((grade) => grade !== undefined)) { //이거는 user의 letter grade를 계산하기 위함
+          calculateFinalGrade(assignmentGrades, midterm, final, gp, attendance);
         } else {
           console.warn("Incomplete assignment grades:", assignmentGrades);
         }
     
+//여기서부터는 user와 다른 학생들의 성적을 비교하여 그래프로 나타내기 위한 코드 부분
 
         const excludedEmail = email; // 제외할 이메일
         //console.log(email);
@@ -102,8 +104,8 @@ const ViewGrade = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        console.log("sdfsdfsdfsdf", filteredGradesRes.data);
         setFilteredGrades(filteredGradesRes.data);
+        console.log("Filtered Grades: ", filteredGrades);
 
         const scores = filteredGrades.map(row => row[5]); // Assuming 'final' is the 6th column (index 5)
         setFinalScores(scores);
@@ -119,7 +121,7 @@ const ViewGrade = () => {
 
         setFinalHistogramData(histogram);
       } catch (error) {
-        alert("Failed to fetch grades.");
+        alert("Failed to fetch gradsdfsdfsdfes."); //요놈이다
         console.error("Error fetching grades:", error);
       }
 
@@ -129,6 +131,13 @@ const ViewGrade = () => {
     }
     
   }, [email]);
+
+  useEffect(() => {
+    if (assignments.length > 0) {
+      console.log("Assignments updated: ", assignments);
+      calculateFinalGrade(assignments, midterm, final, gp, attendance);
+    }
+  }, [assignments]);
 
   const calculateFinalGrade = (assignments, midterm, final, gp, attendance) => {
     if (!assignments || assignments.length < 4) {
