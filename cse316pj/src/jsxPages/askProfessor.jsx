@@ -37,7 +37,54 @@ const AskProfessor = () => {
     fetchQuestions();
   }, []);
 
-
+  //Delete questions function
+  const deleteQuestions = async (qid) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+      //delete request to a server
+      //used question's id
+      await axios.delete(`http://localhost:3001/api/questions/${qid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setQuestionList((prevQuestionList) => 
+        prevQuestionList.filter((question) => question.id !== qid
+      ));
+      alert("Question has been deleted!");
+      window.location.reload();
+      setNewQuestion(''); //initialize new question
+    } catch (error) {
+      console.error('Error submitting question:', error);
+      if (error.response && error.response.status === 401) {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            alert('Session expired. Please sign in again.');
+            return;
+          }
+  
+          const refreshResponse = await axios.post('http://localhost:3001/api/token/refresh', {
+            token: refreshToken,
+          });
+  
+          const newAccessToken = refreshResponse.data.accessToken;
+          localStorage.setItem('authToken', newAccessToken); 
+  
+          await questionSubmission();
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          alert('Session expired. Please sign in again.');
+        }
+      } else {
+        alert('An error occurred while submitting your question.');
+      }
+    }
+  };
   const questionSubmission = async () => {
     if (newQuestion.trim() === '') {
       alert("Question empty");
@@ -126,7 +173,15 @@ const AskProfessor = () => {
           : 
           (<ul>
             {questionList.map((question) => (
-              <li key={question.id}>{question.question_text}</li>
+              <li key={question.id}>
+                {question.question_text}
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => deleteQuestions(question.id)}
+                >
+                  Delete
+                </button>
+              </li>
             ))}
           </ul>)
         }

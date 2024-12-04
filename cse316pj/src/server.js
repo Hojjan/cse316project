@@ -28,7 +28,7 @@ const upload = multer({ dest: "uploads/" });
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'hochan2001!', 
+  password: 'wjswngud!!30', 
   database: 'cse316pj'
 });
 
@@ -367,7 +367,19 @@ app.get('/api/questions', (req, res) => {
   });
 });
 
+//delete questions
+app.delete('/api/questions/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM questions WHERE id = ?`;
 
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting question:", err);
+      return res.status(500).json({ error: "Failed to delete question." });
+    }
+    res.status(200).json({ message: "Question deleted successfully.", id });
+  });
+})
 
 
 function authenticateToken(req, res, next){
