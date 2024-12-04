@@ -273,7 +273,7 @@ app.post('/api/token/refresh', (req, res) => {
 });
 
 //post questions
-app.post('/api/questions', authenticateToken, (req, res) => {
+app.post('/api/questions', (req, res) => {
   const { question } = req.body;
   console.log(question);
   if (!question) {
@@ -292,7 +292,7 @@ app.post('/api/questions', authenticateToken, (req, res) => {
 });
 
 // get questions
-app.get('/api/questions', authenticateToken, (req, res) => {
+app.get('/api/questions', (req, res) => {
   const query = 'SELECT * FROM questions ORDER BY id';
 
   db.query(query, (err, results) => {

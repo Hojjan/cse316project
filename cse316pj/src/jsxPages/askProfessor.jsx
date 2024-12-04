@@ -23,8 +23,12 @@ const AskProfessor = () => {
           console.error("No authentication token found");
           return;
         }
-        const response = await axios.get('http://localhost:3001/api/questions');
-        setQuestionList([...questionList, response.data]);
+        const response = await axios.get('http://localhost:3001/api/questions', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });        
+        setQuestionList(response.data);
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
@@ -47,13 +51,20 @@ const AskProfessor = () => {
         return;
       }
       // Post a new question to the server
-      const response = await axios.post('http://localhost:3001/api/questions', {
-        question: newQuestion,
-      });
+      const response = await axios.post('http://localhost:3001/api/questions', 
+        { question: newQuestion },
+        { 
+          headers: {
+          Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       //save new question to a question list
+      setQuestionList([...questionList, response.data]);
       alert(response.data);
       setNewQuestion(''); //initialize new question
+      
     } catch (error) {
       console.error('Error submitting question:', error);
       if (error.response && error.response.status === 401) {
@@ -113,8 +124,8 @@ const AskProfessor = () => {
           (<p>No questions yet. Ask the professor!</p>)
           : 
           (<ul>
-            {questionList.map((question, index) => (
-              <li key={index}>{question}</li>
+            {questionList.map((question) => (
+              <li key={question.id}>{question.question_text}</li>
             ))}
           </ul>)
         }
