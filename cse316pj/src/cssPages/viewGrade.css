@@ -4,12 +4,20 @@
 }
 
 .charts-only{
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 두 개의 동일한 너비의 column */
+    gap: 10px; /* 각 column 간격 */
+    justify-items: center; /* 각 아이템을 중앙 정렬 */
+    align-items: start; /* 아이템을 상단 정렬 */
 }
 
 .grade-card{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 100%; /* 카드가 column 너비를 차지하도록 설정 */
+    max-width: 500px; /* 카드의 최대 너비 */
+    padding: 20px;
+    border: 1px solid #ccc; /* 선택적으로 카드에 경계 추가 */
+    border-radius: 10px; /* 둥근 모서리 */
+    background-color: #f9f9f9; /* 카드 배경 색상 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드 그림자 효과 */
 }
 

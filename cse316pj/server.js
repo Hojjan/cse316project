@@ -174,7 +174,7 @@ app.get("/api/user/info", authenticateToken, (req, res) => {
 
 app.post('/api/grades/all', authenticateToken, (req, res) => {
   const { email } = req.body; // Access userId from the authenticated token
-
+  console.log("Received email:", email);
   const query = `SELECT assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance 
                   FROM grades WHERE email_address = ?`;
 
@@ -187,7 +187,7 @@ app.post('/api/grades/all', authenticateToken, (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ error: "No grades found for the user." });
     }
-    console.log(results[0])
+    console.log(results[0]); //여기까지는 괜춘
     res.status(200).json(results[0]); // Return the grades for the user
   });
 });
@@ -207,6 +207,10 @@ app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
       console.error("Database error:", err);
       return res.status(500).json({ error: "Failed to fetch filtered grades." });
     }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No grades found for other users." });
+    }
     
     console.log(results);
     res.status(200).json(results); // 필터링된 데이터 반환
@@ -219,7 +223,7 @@ app.post("/api/user/signup", (req, res) => {
   console.log("Request body: ", req.body);
 
   const {email, password, username, year } = req.body;
-  const checkEmailQuery = "SELECT * FROM cse316pj.user WHERE email_address = ?";
+  const checkEmailQuery = "SELECT * FROM user WHERE email_address = ?";
 
   
   db.query(checkEmailQuery, [email], (err, results) => {
@@ -232,7 +236,7 @@ app.post("/api/user/signup", (req, res) => {
     }
 
 
-    const insertUserQuery = "INSERT INTO cse316pj.user (email_address, password, username, year) VALUES (?, ?, ?, ?)";
+    const insertUserQuery = "INSERT INTO user (email_address, password, username, year) VALUES (?, ?, ?, ?)";
     db.query(insertUserQuery, [email, password, username, year], (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Database error during user insertion.", err });
@@ -423,7 +427,6 @@ function authenticateToken(req, res, next){
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {return res.status(403).json({ error: "Invalid or expired token" });}
-    console.log("Decoded user: ", user);
     req.user = user;
     next()
   })

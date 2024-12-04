@@ -30,9 +30,12 @@ const ViewGrade = () => {
   const [gp, setGps] = useState(0);
   const [attendance, setAttendance] = useState(0);
   const [filteredGrades, setFilteredGrades] = useState([]);
-  const [finalScores, setFinalScores] = useState([]);
   const [finalHistogramData, setFinalHistogramData] = useState([]);
+  const [midtermHistogramData, setMidtermHistogramData] = useState([]);
+  const [gpHistogramData, setGpHistogramData] = useState([]);
+  const [assignmentsHistogramData, setAssignmentsHistogramData] = useState([]);
   const [letterGrade, setLetterGrade] = useState("N/A");
+  const [finalScores, setFinalScores] = useState(0);
 
   useEffect(() => { //user email 불러오기
     const fetchUserEmail = async () => {
@@ -105,29 +108,14 @@ const ViewGrade = () => {
           }
         );
         setFilteredGrades(filteredGradesRes.data);
-        console.log("Filtered Grades: ", filteredGradesRes.data);
-
-        filteredGradesRes.data.forEach((row, index) => {
-          console.log(`Row ${index}:`, row);
-        });
-
-        const scores = filteredGradesRes.data.map(row => row.final);
-        setFinalScores(scores);
-
+        const assignmentKeys = ['assignment1', 'assignment2', 'assignment3', 'assignment4'];
+        calculateFinalHistogram(filteredGradesRes.data, 'final', setFinalHistogramData);
+        calculateMtHistogram(filteredGradesRes.data, 'midterm', setMidtermHistogramData);
+        calculateGpHistogram(filteredGradesRes.data, 'group_project', setGpHistogramData);
+        calculateAsmtHistogram(filteredGradesRes.data, assignmentKeys, setAssignmentsHistogramData);
         
-        const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
-        scores.forEach(score => {
-          if (score <= 70) {
-            const binIndex = Math.floor(score / 10);
-            histogram[binIndex]++;
-          } else if (score <= 75) {
-            histogram[7]++; // Last bin for scores between 70-75
-          }
-        });
-
-        setFinalHistogramData(histogram);
       } catch (error) {
-        alert("Failed to fetch gradsdfsdfsdfes."); //요놈이다
+        alert("asdoifjasodifjasodifjasodifj"); //요놈이다
         console.error("Error fetching grades:", error);
       }
 
@@ -137,6 +125,107 @@ const ViewGrade = () => {
     }
     
   }, [email]);
+
+
+
+  const getAccessToken = async () => {
+    let token = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    try {
+      if (!token) {
+        throw new Error("Access token not found or expired.");
+      }
+
+      // Verify token validity
+      const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+      if (Date.now() >= tokenPayload.exp * 1000) {
+        throw new Error("Access token expired.");
+      }
+
+      return token;
+    } catch (err) {
+      console.warn(err.message);
+
+      // Use refresh token to get a new access token
+      if (refreshToken) {
+        try {
+          const response = await axios.post("http://localhost:3001/api/token/refresh", {
+            token: refreshToken,
+          });
+
+          const newAccessToken = response.data.accessToken;
+          localStorage.setItem("accessToken", newAccessToken);
+
+          return newAccessToken;
+        } catch (refreshError) {
+          console.error("Failed to refresh token:", refreshError);
+          alert("Session expired. Please log in again.");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/homepage";
+        }
+      } else {
+        alert("No refresh token available. Please log in again.");
+        window.location.href = "/homepage";
+      }
+    }
+    return null;
+  };
+
+  const calculateFinalHistogram = (data, key, setHistogram) => {
+    const scores = data.map(row => row[key]);
+    const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
+    scores.forEach(score => {
+      if (score <= 70) {
+        const binIndex = Math.floor(score / 10);
+        histogram[binIndex]++;
+      } else if (score <= 75) {
+        histogram[7]++; // Last bin for scores between 70-75
+      }
+    });
+    setHistogram(histogram);
+  };
+
+  const calculateMtHistogram = (data, key, setHistogram) => {
+    const scores = data.map(row => row[key]);
+    const histogram = Array(5).fill(0); // 5 bins: 0-10, 10-20, ..., 40-50
+    scores.forEach(score => {
+      if (score <= 50) {
+        const binIndex = Math.floor(score / 10);
+        histogram[binIndex]++;
+      }
+    });
+    setHistogram(histogram);
+  };
+
+  const calculateGpHistogram = (data, key, setHistogram) => {
+    const scores = data.map(row => row[key]);
+    const histogram = Array(5).fill(0);
+    scores.forEach(score => {
+      if (score <= 125) {
+        const binIndex = Math.floor(score / 25);
+        histogram[binIndex]++;
+      }
+    });
+    setHistogram(histogram);
+  };
+  const calculateAsmtHistogram = (data, keys, setHistogram) => {
+    const totalScores = data.map(row =>
+      keys.reduce((sum, key) => sum + parseFloat(row[key] || 0), 0) // 문자열을 숫자로 변환 후 더하기
+    );
+    console.log("total asmt scores: ", totalScores);
+    
+    const histogram = Array(5).fill(0); // 5 bins: 0-25, 25-50, ...., 200-225
+    totalScores.forEach(score => {
+        if (score <= 225) {
+          const binIndex = Math.floor(score / 25);
+          histogram[binIndex]++;
+        }
+      });
+      setHistogram(histogram);
+  };
+  
 
   useEffect(() => {
     if (assignments.length > 0) {
@@ -171,45 +260,8 @@ const ViewGrade = () => {
     <div className="view-grade-page">
       <Navbar />
         <div className="charts-only">
-        {/* Assignment Scores Card */}
-        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
-          <h2>Assignment Scores</h2>
-          <Bar
-            data={{
-              labels: ["Standard Deviation"],
-              datasets: [
-                {
-                  label: "Assignment Std Dev",
-                  data: [],
-                  backgroundColor: "rgba(75, 192, 192, 0.6)",
-                },
-              ],
-            }}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: true, // 범례 표시
-                  position: "top",
-                },
-                title: {
-                  display: true,
-                  text: "Assignment Standard Deviation",
-                },
-              },
-              scales: {
-                x: {
-                  type: "category", // X축을 category로 설정
-                },
-                y: {
-                  beginAtZero: true, // Y축 0부터 시작
-                },
-              },
-            }}
-          />
-        </div>
-        <p></p>
-        {/* Test Scores Card */}
+
+        {/* Final Exam Histogram */}
         <div className="grade-card" style={{ width: '500px', height: '400px' }}>
           <h2>Final Exam</h2>
           <Bar
@@ -223,33 +275,64 @@ const ViewGrade = () => {
                 },
               ],
             }}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: true, // 범례 표시
-                  position: "top",
+          />
+        </div>
+
+
+
+        {/* Midterm Histogram */}
+        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+          <h2>Midterm Exam</h2>
+          <Bar
+            data={{
+              labels: ["0-10", "10-20", "20-30", "30-40", "40-50"],
+              datasets: [
+                {
+                  label: "Number of Students",
+                  data: midtermHistogramData,
+                  backgroundColor: "rgba(75, 192, 192, 0.6)",
                 },
-                title: {
-                  display: true,
-                  text: "Final Test Scores Distribution",
-                },
-              },
-              scales: {
-                x: {
-                  type: "category", // X축을 category로 설정
-                },
-                y: {
-                  beginAtZero: true, // Y축 0부터 시작
-                  title: {
-                    display: true,
-                    text: "Number of Students",
-                  },
-                },
-              },
+              ],
             }}
           />
         </div>
+
+        {/* Group Project Histogram */}
+        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+          <h2>Group Project</h2>
+          <Bar
+            data={{
+              labels: ["0-25", "25-50", "50-75", "75-100", "100-125"],
+              datasets: [
+                {
+                  label: "Number of Students",
+                  data: gpHistogramData,
+                  backgroundColor: "rgba(255, 159, 64, 0.6)",
+                },
+              ],
+            }}
+          />
+        </div>
+
+        {/* Assignment Histogram */}
+        <div className="grade-card" style={{ width: '500px', height: '400px' }}>
+          <h2>Assignments</h2>
+          <Bar
+            data={{
+              labels: ["0-25", "25-50", "50-75", "75-100", "100-125", "125-150", "150-175", "175-200", "200-225"],
+              datasets: [
+                {
+                  label: "Total Assignment Scores",
+                  data: assignmentsHistogramData, // 계산된 히스토그램 데이터
+                  backgroundColor: "rgba(75, 192, 192, 0.6)",
+                },
+              ],
+            }}
+          />
+
+        </div>
+
+
       </div>
     </div>
   );

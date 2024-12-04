@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import '../cssPages/insertGrade.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function InsertGrade(){
   const [assignments, setAssignments] = useState(['','','','']);
@@ -42,7 +43,7 @@ function InsertGrade(){
     updatedAssignments[index] = value; // 특정 인덱스의 값을 업데이트
     setAssignments(updatedAssignments);
   };
-
+  const navigate = useNavigate();
   const handleConfirm = () => {
     if (assignments.some(assignment => assignment.trim() === '') ||
       midterm.trim() === '' ||
@@ -64,10 +65,12 @@ function InsertGrade(){
       attendance,
       email
     };
-
+    
     axios.post('http://localhost:3001/api/grades', gradesData)
       .then((response) => {
         alert(response.data.message);
+        
+        navigate("/viewGrade");
       })
       .catch((error) => {
         console.error('Error saving grades:', error);
