@@ -11,7 +11,7 @@ const AskProfessor = () => {
     email: 'johndoe@example.com',
     office: 'Room 415, Building A',
     officeHour: 'Monday TuesDay Wednesday 3-5 PM',
-    image: '../../public/user.png',
+    image: "./user.png",
   };
 
   useEffect(() => {
