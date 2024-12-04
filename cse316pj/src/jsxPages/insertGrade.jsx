@@ -58,11 +58,10 @@ function InsertGrade(){
   };
   const navigate = useNavigate();
   const handleConfirm = () => {
-    if (assignments.some(assignment => assignment.trim() === '') ||
-      midterm.trim() === '' ||
-      final.trim() === '' ||
-      groupProject.trim() === '' ||
-      attendance.trim() === '') {
+    if (assignments.some(assignment => assignment === '') ||
+      midterm === '' ||
+      final === '' ||
+      groupProject === '' ) {
       alert("Please fill out all input fields before confirming.");
       return; // Stop further execution
     }
