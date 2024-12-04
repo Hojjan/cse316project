@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config()
 const express = require('express');
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
@@ -28,7 +28,7 @@ const upload = multer({ dest: "uploads/" });
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjswngud!!30', 
+  password: 'hochan2001!', 
   database: 'cse316pj'
 });
 
@@ -175,9 +175,8 @@ app.get("/api/user/info", authenticateToken, (req, res) => {
 app.post('/api/grades/all', authenticateToken, (req, res) => {
   const { email } = req.body; // Access userId from the authenticated token
 
-  const query = `
-    SELECT assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance 
-    FROM grades WHERE email_address = ?`;
+  const query = `SELECT assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance 
+                  FROM grades WHERE email_address = ?`;
 
   db.query(query, [email], (err, results) => {
     if (err) {
