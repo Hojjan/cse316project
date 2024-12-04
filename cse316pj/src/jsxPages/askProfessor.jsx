@@ -67,7 +67,7 @@ const AskProfessor = () => {
   //Delete questions function
   const deleteQuestions = async (qid) => {
     try {
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         console.error("No authentication token found");
         return;
@@ -101,7 +101,7 @@ const AskProfessor = () => {
           });
   
           const newAccessToken = refreshResponse.data.accessToken;
-          localStorage.setItem('authToken', newAccessToken); 
+          localStorage.setItem('accessToken', newAccessToken); 
   
           await questionSubmission();
         } catch (refreshError) {
@@ -121,7 +121,7 @@ const AskProfessor = () => {
     }
 
     try {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         alert('No authentication token found');
         return;
@@ -144,7 +144,7 @@ const AskProfessor = () => {
           user_email: response.data.userEmail,
         },
       ]);
-      alert(response.data);
+      alert("Quetion uploaded successfully");
       window.location.reload();
       setNewQuestion(''); //initialize new question
       
@@ -163,7 +163,7 @@ const AskProfessor = () => {
           });
   
           const newAccessToken = refreshResponse.data.accessToken;
-          localStorage.setItem('authToken', newAccessToken); 
+          localStorage.setItem('accessToken', newAccessToken); 
   
           await questionSubmission();
         } catch (refreshError) {
@@ -209,12 +209,19 @@ const AskProfessor = () => {
           (<ul>
             {questionList.map((question) => (
               <li key={question.id}>
-                {question.question_text}
-                <button
-                  className="btn btn-outline-danger"
-                  onClick={() => deleteQuestions(question.id)}
-                >
-                  Delete
+                <span>{question.question_text}</span>
+                <button className="btn btn-outline-danger btn-sm"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    display: "inline-flex",
+                    padding: "0",
+                    alignItems: "center",
+                    marginLeft: "8px",
+                    justifyContent: "center",
+                  }}
+                  onClick={() => deleteQuestions(question.id)}> 
+                  &times;
                 </button>
               </li>
             ))}
