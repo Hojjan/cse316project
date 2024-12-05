@@ -21,3 +21,6 @@
 
 4. Testing View Grades page
 - Since a charts require a significant amount of data to effectively fulfill their purpose, it would be better to make 3~4 accounts at least. If it is inconvenient, you may creat only two accounts, because there is no problem for that.
+
+5. New documents added
+- new test plan, requirements added due to our plan changes.
