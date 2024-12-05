@@ -99,10 +99,9 @@ const ViewGrade = () => {
     
 //여기서부터는 user와 다른 학생들의 성적을 비교하여 그래프로 나타내기 위한 코드 부분
 
-        const excludedEmail = email; // 제외할 이메일
         //console.log(email);
         const filteredGradesRes = await axios.get( //user의 이메일을 제외하고 나머지 학생들의 성적 불러오기
-          `http://localhost:3001/api/grades/filter-email?email=${excludedEmail}`,
+          `http://localhost:3001/api/grades/allstudents`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -176,7 +175,7 @@ const ViewGrade = () => {
     const histogram = Array(8).fill(0); // 8 bins: 0-10, 10-20, ..., 70-75
     scores.forEach(score => {
       if (score <= 75) { 
-        const binIndex = score === 75 ? 7 : Math.floor(score / 10); // 75는 마지막 bin에 포함
+        const binIndex = parseFloat(score) === 75 ? 7 : Math.floor(score / 10); // 75는 마지막 bin에 포함
         histogram[binIndex]++;
       }
     });
@@ -188,7 +187,7 @@ const ViewGrade = () => {
     const histogram = Array(5).fill(0); // 5 bins: 0-10, 10-20, ..., 40-50
     scores.forEach(score => {
       if (score <= 50) {
-        const binIndex = score === 50 ? 4 : Math.floor(score / 10); // 125는 마지막 bin에 포함
+        const binIndex = parseFloat(score) === 50 ? 4 : Math.floor(score / 10); // 125는 마지막 bin에 포함
         histogram[binIndex]++;
       }
     });
@@ -200,7 +199,7 @@ const ViewGrade = () => {
     const histogram = Array(5).fill(0);
     scores.forEach(score => {
       if (score <= 125) {
-        const binIndex = score === 125 ? 4 : Math.floor(score / 25); // 125는 마지막 bin에 포함
+        const binIndex = parseInt(score) === 125 ? 4 : Math.floor(score / 25); // 125는 마지막 bin에 포함
         histogram[binIndex]++;
       }
     });
@@ -258,8 +257,8 @@ const ViewGrade = () => {
     const parsedGp = parseFloat(gp);
     const parsedAt = parseFloat(attendance);
 
-    
-    const total = totalAsmt + parsedMidterm + parsedFinal + parsedGp - (parsedAt * 0.25);
+    const parsedAttendance = 25 - (parsedAt * 0.25);
+    const total = totalAsmt + parsedMidterm + parsedFinal + parsedGp + parsedAttendance;
     
     const finalScore = total;
     setFinalScores(finalScore);

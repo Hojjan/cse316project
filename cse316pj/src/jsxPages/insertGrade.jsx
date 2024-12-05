@@ -78,7 +78,7 @@ function InsertGrade(){
       email
     };
     
-    axios.post('http://localhost:3001/api/grades', gradesData)
+    axios.post('http://localhost:3001/api/mygrades', gradesData)
       .then((response) => {
         alert(response.data.message);
         
@@ -86,8 +86,12 @@ function InsertGrade(){
       })
       .catch((error) => {
         console.error('Error saving grades:', error);
-        alert('Failed to save grades');
-      });
+        if (error.response && error.response.data && error.response.data.error) {
+          alert(error.response.data.error); // Display server error message
+        } else {
+          alert('Failed to save grades');
+        }
+      })
   };
 
   return (

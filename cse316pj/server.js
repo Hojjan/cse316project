@@ -41,25 +41,60 @@ db.connect((err) => {
 }); 
 
 //insert Grade //////////////////////////////////////////////////////////////////////////////////
-app.post('/api/grades', (req, res) => {
+app.post('/api/mygrades', (req, res) => {
   const { assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email } = req.body;
   console.log(req.body);
-  const query = `
-    INSERT INTO grades (assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email_address)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+  const checkQuery = `
+    SELECT * FROM grades WHERE email_address = ?
   `;
 
-  db.query(
-    query,
-    [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email],
-    (err, result) => {
-      if (err) {
-        console.error('Error inserting data:', err);
-        return res.status(500).json({ error: 'Failed to save grades' });
-      }
-      res.status(200).json({ message: 'Grades saved successfully' });
+  db.query(checkQuery, [email], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('Error checking email existence:', checkErr);
+      return res.status(500).json({ error: 'Database error' });
     }
-  );
+
+    if (checkResult.length > 0) {
+      // Email exists, update the grades
+      const updateQuery = `
+        UPDATE grades
+        SET assignment1 = ?, assignment2 = ?, assignment3 = ?, assignment4 = ?, 
+            midterm = ?, final = ?, group_project = ?, attendance = ?
+        WHERE email_address = ?
+      `;
+
+      db.query(
+        updateQuery,
+        [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email],
+        (updateErr, updateResult) => {
+          if (updateErr) {
+            console.error('Error updating data:', updateErr);
+            return res.status(500).json({ error: 'Failed to update grades' });
+          }
+          res.status(200).json({ message: 'Grades Updated successfully' });
+        }
+      );
+    } else {
+      // Email does not exist, insert the new grades
+      const insertQuery = `
+        INSERT INTO grades (assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email_address)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      db.query(
+        insertQuery,
+        [assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance, email],
+        (insertErr, insertResult) => {
+          if (insertErr) {
+            console.error('Error inserting data:', insertErr);
+            return res.status(500).json({ error: 'Failed to save grades' });
+          }
+          res.status(200).json({ message: 'Grades Inserted successfully!' });
+        }
+      );
+    }
+  });
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,30 +227,24 @@ app.post('/api/grades/all', authenticateToken, (req, res) => {
   });
 });
 
+app.get('/api/grades/allstudents', authenticateToken, (req, res) => {
 
-app.get('/api/grades/filter-email', authenticateToken, (req, res) => {
-  const excludedEmail = req.query.email;
+  const query = `SELECT assignment1, assignment2, assignment3, assignment4, midterm, final, group_project, attendance FROM grades`;
 
-  if (!excludedEmail) {
-    return res.status(400).json({ error: "Email to exclude is required." });
-  }
-
-  const query = `SELECT * FROM grades WHERE email_address != ?`;
-
-  db.query(query, [excludedEmail], (err, results) => {
+  db.query(query, (err, results) => {
     if (err) {
       console.error("Database error:", err);
-      return res.status(500).json({ error: "Failed to fetch filtered grades." });
+      return res.status(500).json({ error: "Failed to fetch grades." });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ error: "No grades found for other users." });
+      return res.status(404).json({ error: "No grades found for the user." });
     }
-    
-    console.log(results);
-    res.status(200).json(results); // 필터링된 데이터 반환
+    console.log(results); //여기까지는 괜춘
+    res.status(200).json(results); // Return the grades for the user
   });
 });
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
