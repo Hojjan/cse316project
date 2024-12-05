@@ -109,15 +109,15 @@ const ViewGrade = () => {
         );
 
         setNumStudent(allStudentGrades.data.length); //num of participants
-        
+        if (allStudentGrades.data.length < 7) {
+          alert("Notice: number of participants less than 7 (half of class)");
+        }
         calculateFinalHistogram(allStudentGrades.data, 'final', setFinalHistogramData);
         calculateMtHistogram(allStudentGrades.data, 'midterm', setMidtermHistogramData);
         calculateGpHistogram(allStudentGrades.data, 'group_project', setGpHistogramData);
         calculateAsmtHistogram(allStudentGrades.data, 'assignment1','assignment2',
                                 'assignment3','assignment4', setAssignmentsHistogramData);
-        if(numStudent < 7){
-          alert("Notice: number of participants less than 7 (half of class)")
-        }
+        
         
       } catch (error) {
         console.error("Error fetching grades:", error);
