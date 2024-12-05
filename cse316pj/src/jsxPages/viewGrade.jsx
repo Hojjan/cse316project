@@ -36,6 +36,7 @@ const ViewGrade = () => {
   const [letterGrade, setLetterGrade] = useState("N/A");
   const [finalScoreIn100, setFinalScoreIn100] = useState(0);
   const [finalScores, setFinalScores] = useState(0);
+  const [numStudent, setNumStudent] = useState(0);
 
   useEffect(() => { //user email 불러오기
     const fetchUserEmail = async () => {
@@ -100,17 +101,23 @@ const ViewGrade = () => {
 //여기서부터는 user와 다른 학생들의 성적을 비교하여 그래프로 나타내기 위한 코드 부분
 
         //console.log(email);
-        const filteredGradesRes = await axios.get( //user의 이메일을 제외하고 나머지 학생들의 성적 불러오기
+        const allStudentGrades = await axios.get( 
           `http://localhost:3001/api/grades/allstudents`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        calculateFinalHistogram(filteredGradesRes.data, 'final', setFinalHistogramData);
-        calculateMtHistogram(filteredGradesRes.data, 'midterm', setMidtermHistogramData);
-        calculateGpHistogram(filteredGradesRes.data, 'group_project', setGpHistogramData);
-        calculateAsmtHistogram(filteredGradesRes.data, 'assignment1','assignment2',
+
+        setNumStudent(allStudentGrades.data.length); //num of participants
+        
+        calculateFinalHistogram(allStudentGrades.data, 'final', setFinalHistogramData);
+        calculateMtHistogram(allStudentGrades.data, 'midterm', setMidtermHistogramData);
+        calculateGpHistogram(allStudentGrades.data, 'group_project', setGpHistogramData);
+        calculateAsmtHistogram(allStudentGrades.data, 'assignment1','assignment2',
                                 'assignment3','assignment4', setAssignmentsHistogramData);
+        if(numStudent < 7){
+          alert("Notice: number of participants less than 7 (half of class)")
+        }
         
       } catch (error) {
         console.error("Error fetching grades:", error);
@@ -241,8 +248,6 @@ const ViewGrade = () => {
       console.error("Assignments array is incomplete:", assignments);
       return;
     }
-    console.log("assignments", assignments); 
-
     const totalAsmt = assignments.reduce((sums, score) => {
       const parsedScore = parseFloat(score);
       if (isNaN(parsedScore)) {
@@ -278,7 +283,7 @@ const ViewGrade = () => {
     else if (finalScore >= 335) setLetterGrade('D+');
     else if (parsedAt >= 5) setLetterGrade('F')
     else setLetterGrade('D');
-      
+    
   };
 
 
@@ -370,6 +375,10 @@ const ViewGrade = () => {
           </p>
           <p>
             <strong>Final Score in Percentage:</strong> {finalScoreIn100.toFixed(2)}%
+          </p>
+          
+          <p>
+            <strong>Total Participants:</strong> {numStudent}
           </p>
         </div>
 
