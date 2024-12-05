@@ -20,7 +20,7 @@
 .subtitle{
   text-decoration: underline;
   font-size: 25px;
-  margin-bottom: 3%;
+  margin-bottom: 1%;
 }
 
 .homeLogin{
@@ -89,6 +89,7 @@
 
 .detailed-text{
   font-size: 20px;
+
 }
 
 @media(max-width: 1300px){

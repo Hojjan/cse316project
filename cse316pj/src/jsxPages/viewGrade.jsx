@@ -276,6 +276,7 @@ const ViewGrade = () => {
     else if (finalScore >= 365) setLetterGrade('C');
     else if (finalScore >= 350) setLetterGrade('C-');
     else if (finalScore >= 335) setLetterGrade('D+');
+    else if (parsedAt >= 5) setLetterGrade('F')
     else setLetterGrade('D');
       
   };

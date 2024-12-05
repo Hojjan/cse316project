@@ -9,7 +9,7 @@
 }
 
 .assignments, .tests, .groupProject{
-    margin-left: 70px;
+    margin-left: 30px;
     margin-top: 50px;
 }
 
@@ -94,9 +94,9 @@
 }
 
 .confirmBtn{
-    position: fixed;
-    bottom: 15%;
-    right: 15%;
+    position: absolute; /* 부모 컨테이너 흐름에 따라 배치 */
+    bottom: 10%;
+    right: 10%;
     width: 120px;
     height: 40px;
     background-color: white;
@@ -104,4 +104,24 @@
     color: blue;
     font-size: large;
     border-radius: 10px;
+    display: block; 
+}
+
+@media (max-width: 1000px) {
+    .gradeWholeContainer {
+      flex-direction: column; /* 한 칼럼으로 표시 */
+      align-items: center; /* 가운데 정렬 */
+    }
+  
+    .assignments, .tests, .groupProject {
+      margin-left: 0; /* 좌측 여백 제거 */
+      margin-top: 20px; /* 위쪽 간격 추가 */
+    }
+  }
+
+@media (max-width: 700px){
+    .confirmBtn{
+        position: static;
+        margin: 30px auto;
+    }
 }

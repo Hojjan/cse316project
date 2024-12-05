@@ -343,59 +343,42 @@ app.post('/api/token/refresh', (req, res) => {
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) {return res.sendStatus(403);} 
 
-      const accessToken = genAccTok({ user });
+      const accessToken = genAccTok(user);
       return res.status(200).json({ accessToken: accessToken }); 
   });
 });
 
 //post questions
-app.post('/api/questions', (req, res) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    console.error('Access token is missing.');
-    return res.status(401).json({ error: 'Access token is missing.' });
+app.post('/api/questions', authenticateToken, (req, res) => {
+  const userEmail = req.user.email; // Extracted from the token by authenticateToken middleware
+  if (!userEmail) {
+    console.error('User email is missing from token.');
+    return res.status(400).json({ error: 'User email is missing from token.' });
   }
 
-  // Verify and decode JWT token
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+  const { question } = req.body;
+  if (!question || question.trim() === '') {
+    console.error('Question is required but not provided.');
+    return res.status(400).json({ error: 'Question is required.' });
+  }
+
+  // Insert the question into the database
+  const query = 'INSERT INTO questions (question_text, user_email) VALUES (?, ?)';
+  db.query(query, [question, userEmail], (err, result) => {
     if (err) {
-      console.error('Invalid or expired token:', err);
-      return res.status(403).json({ error: 'Invalid or expired token.' });
+      console.error('Error inserting question into database:', err);
+      return res.status(500).json({ error: 'Failed to save question.' });
     }
 
-    const userEmail = decoded.email;
-    if (!userEmail) {
-      console.error('User email is missing from token.');
-      return res.status(400).json({ error: 'User email is missing from token.' });
-    }
-
-    const { question } = req.body;
-    if (!question || question.trim() === '') {
-      console.error('Question is required but not provided.');
-      return res.status(400).json({ error: 'Question is required.' });
-    }
-
-    // Insert the question into the database
-    const query = 'INSERT INTO questions (question_text, user_email) VALUES (?, ?)';
-    db.query(query, [question, userEmail], (err, result) => {
-      if (err) {
-        console.error('Error inserting question into database:', err);
-        return res.status(500).json({ error: 'Failed to save question.' });
-      }
-
-      console.log('Question successfully saved:', result);
-      res.status(201).json({
-        message: 'Question successfully uploaded!',
-        questionId: result.insertId,
-        questionText: question,
-        userEmail: userEmail,
-      });
+    console.log('Question successfully saved:', result);
+    res.status(201).json({
+      message: 'Question successfully uploaded!',
+      questionId: result.insertId,
+      questionText: question,
+      userEmail: userEmail,
     });
   });
 });
-
 
 
 // get questions

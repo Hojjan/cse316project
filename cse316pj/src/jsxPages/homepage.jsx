@@ -118,7 +118,7 @@ function Home(){
           <p className="detailed-text">A web site for viewing grades of classmates, and calculating my temporary grades!</p>
         </div>
         <div>
-          <p className="subtitle"><strong>About the course:</strong></p>
+          <p className="subtitle"><strong>About the course(CSE 316):</strong></p>
             <li className="detailed-text">
               An introduction to systematic design, development and testing of software
               <p className="detailed-text">systems, including even-driven and Web programming, information</p>
